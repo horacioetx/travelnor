@@ -1,0 +1,23 @@
+name: Deploy to server oneprovider
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.ONEPROV_HOST }}
+          username: ${{ secrets.ONEPROV_USER }}
+          password: ${{ secrets.ONEPROV_PASS }}
+          script: |
+            cd /dockers/travelnor/travelnor
+            git pull
+            docker images
+            docker ps -as
+            df -h
