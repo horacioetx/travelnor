@@ -12,7 +12,7 @@
 	
 	/* database credentials */
 	
-	define('DBHOST','23.19.65.209');
+	define('DBHOST','50.87.253.77');
 	define('DBUSER','nddinfos_traveln');
 	define('DBPASS','Sheremetievo-2');
 	define('DBNAME','nddinfos_travelnor');
