@@ -1,0 +1,242 @@
+html {
+	height:100%;
+}
+
+body {
+	font-size: .875rem;
+	padding-bottom: 40px;
+	background-color: #e9ecef;
+	height:100%;
+}
+
+p {
+	margin-bottom: 3px;
+}
+
+a {
+	color: #fff;
+	text-decoration: none !important;
+}
+
+label {
+	font-weight:bold;
+}
+
+/* custom buttons */
+
+.btn-success {
+	color:#fff;
+	background-color:#C5024D;
+	border-color:#C5024D;
+}
+
+.btn-success:hover {
+	color:#fff;
+	background-color:#b10245;
+	border-color:#b10245;
+}
+
+.btn-success:focus {
+	background-color:#b10245;
+	border-color:#b10245;
+	box-shadow: 0px 0px 0px 0.2rem rgba(253, 78, 145, 0.5)
+}
+
+/* navbar */
+
+.navbar {
+	justify-content: flex-start;
+}
+
+
+/* side navbar */
+
+.bg-blue {
+	background-color:#002554 !important;
+}
+
+.bg-blue:hover {
+	background-color:#0058cc !important;
+}
+
+
+
+
+
+
+
+#body-row {
+    margin-left:0;
+    margin-right:0;
+}
+#sidebar-container {
+    min-height: 100vh;   
+    background-color: #002554;
+    padding: 0;
+}
+
+/* Sidebar sizes when expanded and expanded */
+
+.sidebar-expanded {
+    width: 230px;
+}
+.sidebar-collapsed {
+    width: 60px;
+}
+
+/* Menu item*/
+
+#sidebar-container .list-group a {
+    height: 50px;
+    color: white;
+}
+
+/* Submenu item*/
+
+#sidebar-container .list-group .sidebar-submenu a {
+    height: 45px;
+    padding-left: 30px;
+}
+.sidebar-submenu {
+    font-size: 0.9rem;
+}
+
+/* Separators */
+
+.sidebar-separator-title {
+    background-color: #002554;
+    height: 35px;
+}
+.sidebar-separator {
+    background-color: #002554;
+    height: 25px;
+}
+.logo-separator {
+    background-color: #002554;    
+    height: 60px;
+}
+
+/* Closed submenu icon */
+
+#sidebar-container .list-group .list-group-item[aria-expanded="false"] .submenu-icon::after {
+  content: " \f0d7";
+  font-family: FontAwesome;
+  display: inline;
+  text-align: right;
+  padding-left: 10px;
+}
+/* Opened submenu icon */
+
+#sidebar-container .list-group .list-group-item[aria-expanded="true"] .submenu-icon::after {
+  content: " \f0da";
+  font-family: FontAwesome;
+  display: inline;
+  text-align: right;
+  padding-left: 10px;
+}
+/* modals */
+
+.modal-header {
+  background: #428bca;
+  color:#fff;
+}
+
+.close {
+	color:#fff;
+}
+
+.close:hover {
+	color:#cc0000;
+}
+
+/* breadcrumb */
+
+.breadcrumb-item a{
+	color: #0056b3;
+	text-decoration: none !important;
+}
+
+/* carosel controls */
+
+.carousel-control-prev,
+.carousel-control-next {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15%;
+  color: #999;
+  text-align: center;
+  opacity: 0.5; }
+  .carousel-control-prev:hover, .carousel-control-prev:focus,
+  .carousel-control-next:hover,
+  .carousel-control-next:focus {
+    color: #999;
+    text-decoration: none;
+    outline: 0;
+    opacity: .9; }
+
+.carousel-control-prev {
+  left: 0; }
+
+.carousel-control-next {
+  right: 0; }
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: transparent no-repeat center center;
+  background-size: 100% 100%; }
+
+.carousel-control-prev-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E"); }
+
+.carousel-control-next-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E"); }
+
+/* data tables */
+
+.dataTables_filter {
+	float: right;
+}
+
+.dataTables_paginate {
+	float: right;
+	text-align: right;
+	padding-top: 0.25rem;	
+}
+
+/* cards */
+
+.card {
+	border-color: #d3d9df;
+}
+
+.card-header {
+	font-weight:bold;
+	font-size:1.0rem;
+	color: #0866c6;
+}
+
+.table {
+	background-color:#fff;
+}
+
+/* footer */
+
+footer {
+    position: fixed;
+    bottom: 0;
+	text-align: left;
+    width: 100%;
+    height: 30px !important;
+    line-height: 30px !important;
+	color:#fff;
+    background-color: #002554;
+	z-index: 9999;
+}
+
