@@ -1,14 +1,16 @@
 <?php
 
-	/* include config */
+    /* admin_programs.php */
 	
-	require_once('includes/config.php');
+	/* db connection and session setup */
 	
-	/* if not logged in redirect to login page */
+	include("check.php"); 
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
+	/* if not logged in redirects to login page */
 	
-	/* receive vars */
+	if (!($_SESSION['user'])) { header('Location: login'); }	
+
+    /* receive vars */
 	
 	$prog_id = $_REQUEST['progid'];
 	
@@ -37,12 +39,14 @@
 	else
 		$feature = '<span class="text-success">Destacado</span>';
 	
-	$maxdays = 100;
+    /* page title */
 	
-	/* define page title */
-	
-	$title = str_replace("<br />", " ", $rrows['program_name']);
-	$active_page = 1;
+	if (isset($conrow['company_name']))	
+        $title = $conrow['company_name'] . ' - ' . str_replace("<br />", " ", $rrows['program_name']);
+    else	
+        $title = str_replace("<br />", " ", $rrows['program_name']);
+
+    $active_page = 1;
 
 ?>
 
@@ -51,154 +55,183 @@
 
 	<head>
 		
+		<!-- meta tags -->
+		
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title><?php echo $title; ?></title>
 		
 		<!-- favicon -->
 		
-		<link rel="apple-touch-icon" sizes="180x180" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="images/logos/favicon.png">	
+
+
+		<!-- fonts -->
 		
-		<!-- Bootstrap CSS -->
+		<link href="https://fonts.googleapis.com/css?family=Nunito:400,600|Open+Sans:400,600,700" rel="stylesheet">		
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+
+		<!-- js -->
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-		<script src="https://kit.fontawesome.com/379421e620.js" crossorigin="anonymous"></script>
-
-		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,400i|Playfair+Display&display=swap" rel="stylesheet">
 		
-		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<!-- Custom CSS -->		
+		
+		<link rel="stylesheet" href="css/easion.css">	
 
-		<!-- custom CSS -->
-
-		<link href="css/styles.css" rel="stylesheet">
-
+		<!-- title -->
+		
 		<title><?php echo $title; ?></title>
 		
 	</head>
 	
 	<body>
 	
-		<!-- top navbar -->
-		
-		<?php include ("navbar.php"); ?>	
-		
-		<!-- sidebar and main content -->
-		
-		<div class="row" id="body-row">			
+		<div class="dash">
 			
-			<?php include ("navbar_side.php"); ?>			
+			<!-- navbar -->
 
-			<div class="col mb-5">
-				 
-				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">	
-					<nav aria-label="breadcrumb">
-						<ol class="breadcrumb">								
-							<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
-							<li class="breadcrumb-item"><a href="admin_programs">Directorio de Programas</a></li>
-							<li class="breadcrumb-item active" aria-current="page"><?php echo $title; ?></li>
-						</ol>
-					</nav>							
-				</div>
-					
-				<?php include("program_subnav.php"); ?>
-		
-				<div id="general_info">
-				
-					<?php include 'admin_program_general_info_disp.php'; ?>				
-				
-				</div>
-					
-				<!-- titles and subtitles -->			
+			<?php include ("navbar.php"); ?>
 
-				<div class="row mt-3">
-					<div class="col-9">	
-						<div class="card">
-							<div class="card-header">Título<input type="button" name="edit3" id="edit3" value="Editar" class="btn btn-info btn-sm edit_data3 float-right"></div>
-							<div class="card-body text-justify">
-								<span id="subtitle"><?php echo $rrows['program_subtitle'];?></span>
+			<!-- center body -->
+			
+			<div class="dash-app">
+			
+				<!-- header bar -->
+				
+				<?php include ("header_bar.php"); ?>
+				
+				<!-- breadcrumb -->
+				
+				<nav class="bg-light" aria-label="breadcrumb">
+					<ol class="breadcrumb">								
+						<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
+						<li class="breadcrumb-item"><a href="admin_programs">Directorio de Viajes</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><?php echo str_replace('<br />', ' ', $rrows['program_name']); ?></li>						
+					</ol>
+				</nav>					
+
+				<!-- main content -->				
+				
+				<main class="dash-content">
+				
+					<div class="container-fluid">
+
+                        <div class="row">						
+                            <div class="col">
+                                <?php include("program_subnav.php"); ?>                                
+                            </div>
+                        </div>
+
+						<div class="jumbotron jumbotron-fluid mt-4 py-2 border-top border-bottom bg-transparent">
+							<div class="container ml-0 pl-0">
+								<h2 class="text-dark">Programa : <span class="text-success"><?php echo str_replace("<br />", " ", $rrows['program_name']); ?></span></h2>
 							</div>
 						</div>
-					</div>
-				</div>	
+
+						<div class="row">						
+							<div class="col">							
 						
-				<div class="row mt-3">	
-					<div class="col-9">	
-						<div class="card">
-							<div class="card-header">Subtítulo<input type="button" name="edit4" id="edit4" value="Editar" class="btn btn-info btn-sm edit_data4 float-right"></div>
-							<div class="card-body text-justify">
-								<span id="subtitle2"><?php echo $rrows['program_subtitle2'];?></span>
+                                <div id="general_info"><?php include 'admin_program_general_info_disp.php'; ?> </div>								
+
 							</div>
-						</div>
-					</div>
-				</div>					
-					
-				<!-- Thumb image and highlighted texts -->
-				
-				<span id="thumbimg">
-				
-					<?php include 'admin_program_view_disp_thumb.php'; ?>	
-				
-				</span>
+                        </div>
+							
+                        <!-- titles and subtitles -->			
 
-				<!-- Carrusel images -->
+                        <div class="row mt-3">
+                            <div class="col-9">	
+                                <div class="card easion-card h-100">
+                                    <div class="card-header d-flex justify-content-between align-items-center"><strong>Título</strong><button type="button" name="edit3" id="edit3" value="Editar" class="btn btn-info btn-sm edit_data3 float-right"><i class="fas fa-pencil-alt"></i></button></div>
+                                    <div class="card-body text-justify">
+                                        <span id="subtitle"><?php echo $rrows['program_subtitle'];?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>	
+                                    
+                        <div class="row mt-3">	
+                            <div class="col-9">	
+                                <div class="card easion-card h-100">
+                                    <div class="card-header d-flex justify-content-between align-items-center"><strong>Subtítulo</strong><button type="button" name="edit4" id="edit4" value="Editar" class="btn btn-info btn-sm edit_data4 float-right"><i class="fas fa-pencil-alt"></i></button></div>
+                                    <div class="card-body text-justify">
+                                        <span id="subtitle2"><?php echo $rrows['program_subtitle2'];?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-				<div id="cardis">
-				
-					<?php include 'admin_program_view_disp_imgcar.php'; ?>	
-					
-				</div>
-	
-				<!-- Maps -->
-				
-				<div id="mapdis">
-				
-					<?php include 'admin_program_view_disp_map.php'; ?>	
-					
-				</div>								
+                        <!-- Thumb image and highlighted texts -->
 
-			</div>	
+                        <div class="row mt-3" id="thumbimg">                        
+                            
+                            <?php include 'admin_program_view_disp_thumb.php'; ?>
+
+                        </div>
+
+                        <!-- Carrusel images -->
+
+                        <div class="row mt-3">   
+                            <div class="col">                         
+
+                                <div id="cardis"><?php include 'admin_program_view_disp_imgcar.php'; ?>	</div>
+
+                            </div>
+                        </div>
+
+                        <!-- Map -->
+
+                        <div class="row mt-3"> 
+                            <div class="col-6">     
+                
+                                <div id="mapdis"><?php include 'admin_program_view_disp_map.php'; ?></div>	
+
+                            </div>
+						</div>	
+
+					</div>		
+
+				</main>
+				
+			</div>
 			
-			<!-- footer -->	
-					
-			<?php include ("footer.php"); ?>	
-				
-		</div>
-		
+		</div>		
+
 		<!-- MODALS -->
-		
-		<!-- modal to edit General Info -->
+
+        <!-- modal to edit General Info -->
 		
 		<div class="modal fade" id="edit_general" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">		
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Información General</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Información General</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>					
 					<form id="form_edit_general" method="post" autocomplete="off">						
-						<div class="modal-body">						
+						<div class="modal-body">	
+
 							<div class="form-row">								
 								<div class="col">
-									<label for="e_program_name">Nombre del Programa :</label>
+									<label for="e_program_name" class="col-form-label">Nombre del Programa :</label>
 									<input type="text" id="e_program_name" name="e_program_name" class="form-control" value="">
 								</div>
-							</div>							
+							</div>	
+
 							<div class="form-row">								
 								<div class="col mt-2">
-									<label for="e_program_code">Código Interno :</label>
+									<label for="e_program_code" class="col-form-label">Código Interno :</label>
 									<input type="text" id="e_program_code" name="e_program_code" class="form-control" value="">
 								</div>
-							</div>							
+							</div>	
+
 							<div class="form-row">								
 								<div class="col">
 									<label for="e_program_duration" class="col-form-label">Duración : </label>
 									<select class="custom-select mr-sm-2" id="e_program_duration" name="e_program_duration" required>
 										<?php
-											for ($i=1; $i<=$maxdays; $i++) {
+											for ($i=1; $i<=$conrow['maxdays']; $i++) {
 												echo '<option>' . $i . '</option>';
 											}
 										?>
@@ -210,8 +243,8 @@
 								<div class="col">
 									<label for="e_program_feature" class="col-form-label">Destacado :</label>
 									<select class="custom-select mr-sm-2" id="e_program_feature" name="e_program_feature">
-										<option value="0" class="text-success">No Destacado</option>
-										<option value="1" class="text-danger">Desatacado en Home Page</option>
+										<option value="0" class="text-danger">No Destacado</option>
+										<option value="1" class="text-success">Desatacado en Home Page</option>
 									</select>
 								</div>
 							</div>		
@@ -228,7 +261,6 @@
 									</select>
 								</div>
 							</div>	
-
 							
 							<div class="form-row">
 								<div class="col">
@@ -239,6 +271,7 @@
 									</select>
 								</div>
 							</div>
+
 							<div class="form-row">
 								<div class="col">
 									<label for="e_program_classif" class="col-form-label">Clasificación 1:</label>
@@ -254,7 +287,8 @@
 										<option value="VM">Vuelta al Mundo</option>
 									 </select>
 								</div>
-							</div>							
+							</div>			
+
 							<div class="form-row">
 								<div class="col">
 									<label for="e_program_classif2" class="col-form-label">Clasificación 2:</label>
@@ -270,12 +304,14 @@
 										<option value="VM">Vuelta al Mundo</option>
 									 </select>
 								</div>
-							</div>							
+							</div>		
+
 							<div class="modal-footer">							
 								<input type="hidden" id="e_program_id0" name="e_program_id0" value="<?php echo $prog_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editar0" name="editar0" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editar0" name="editar0" value="edit">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
+
 						</div>								
 					</form>	
 				</div>				
@@ -288,7 +324,7 @@
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Highlights</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Highlights</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -297,14 +333,14 @@
 						<div class="modal-body">						
 							<div class="form-row">								
 								<div class="col">
-									<label for="e_program_highlights">Highlights :</label>
+									<label for="e_program_highlights" class="col-form-label">Highlights :</label>
 									<textarea class="form-control" id="e_program_highlights" name="e_program_highlights" rows="5"></textarea>
 								</div>
 							</div>							
 							<div class="modal-footer">							
 								<input type="hidden" id="e_program_id" name="e_program_id" value="<?php echo $prog_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editar1" name="editar1" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editar1" name="editar1" value="edit">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
 						</div>								
 					</form>	
@@ -318,7 +354,7 @@
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Introducción</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Introducción</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -327,14 +363,14 @@
 						<div class="modal-body">						
 							<div class="form-row">								
 								<div class="col">
-									<label for="e_program_intro">Introducción :</label>
+									<label for="e_program_intro" class="col-form-label">Introducción :</label>
 									<textarea class="form-control" id="e_program_intro" name="e_program_intro" rows="5"></textarea>
 								</div>
 							</div>							
 							<div class="modal-footer">							
 								<input type="hidden" id="e_program_id2" name="e_program_id2" value="<?php echo $prog_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editar2" name="editar2" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editar2" name="editar2" value="edit">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
 						</div>								
 					</form>	
@@ -348,7 +384,7 @@
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Título</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Título</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -357,14 +393,14 @@
 						<div class="modal-body">						
 							<div class="form-row">								
 								<div class="col">
-									<label for="e_program_subtitle">Título :</label>
+									<label for="e_program_subtitle" class="col-form-label">Título :</label>
 									<input type="text" id="e_program_subtitle" name="e_program_subtitle" class="form-control" value="">
 								</div>
 							</div>							
 							<div class="modal-footer">							
 								<input type="hidden" id="e_program_id3" name="e_program_id3" value="<?php echo $prog_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editar3" name="editar3" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editar3" name="editar3" value="edit">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
 						</div>								
 					</form>	
@@ -378,7 +414,7 @@
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Subtítulo</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Subtítulo</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -387,14 +423,14 @@
 						<div class="modal-body">						
 							<div class="form-row">								
 								<div class="col">
-									<label for="e_program_subtitle2">Subítulo :</label>
+									<label for="e_program_subtitle2" class="col-form-label">Subítulo :</label>
 									<input type="text" id="e_program_subtitle2" name="e_program_subtitle2" class="form-control" value="">
 								</div>
 							</div>							
 							<div class="modal-footer">							
 								<input type="hidden" id="e_program_id4" name="e_program_id4" value="<?php echo $prog_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editar4" name="editar4" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editar4" name="editar4" value="edit">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
 						</div>								
 					</form>	
@@ -429,7 +465,7 @@
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Subir Imágenes</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-upload mr-3"></i>Subir Imágenes</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -457,7 +493,7 @@
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Selección de Sello</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-stamp mr-3"></i>Selección de Sello</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -490,12 +526,12 @@
 							</div>
 							
 							<a class="carousel-control-prev mr-3" href="#carouselExampleControls" role="button" data-slide="prev">
-								<span class="carousel-control-prev-icon" aria-hidden="true"><</span>
+								<span class="carousel-control-prev-icon text-dark" aria-hidden="true"><i class="fas fa-chevron-left"></i></span>
 								<span class="sr-only">Previous</span>
 							</a>
 							
 							<a class="carousel-control-next ml-3" href="#carouselExampleControls" role="button" data-slide="next">
-								<span class="carousel-control-next-icon" aria-hidden="true">></span>
+								<span class="carousel-control-next-icon text-dark" aria-hidden="true"><i class="fas fa-chevron-right"></i></span>
 								<span class="sr-only">Next</span>
 							</a>
 							
@@ -512,7 +548,7 @@
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Pie de Imágen</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Pie de Imágen</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -521,15 +557,15 @@
 						<div class="modal-body">						
 							<div class="form-row">								
 								<div class="col">
-									<label for="program_banner_cap">Pie :</label>
+									<label for="program_banner_cap" class="col-form-label">Pie :</label>
 									<input type="text" id="program_banner_cap" name="program_banner_cap" class="form-control" value="">
 								</div>
 							</div>							
 							<div class="modal-footer">							
 								<input type="hidden" id="program_cap" name="program_cap" value="<?php echo $prog_id; ?>">
 								<input type="hidden" id="program_cap_id" name="program_cap_id" value="">
-								<button type="submit" class="btn btn-primary" id="editar_cap" name="editar_cap" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editar_cap" name="editar_cap" value="edit">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
 						</div>								
 					</form>	
@@ -537,38 +573,18 @@
 			</div>			
 		</div>
 
-		<!-- jQuery, Popper.js, Bootstrap JS -->
+        <!-- js -->
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
+		
+		<!-- custom js -->
+		
+		<script src="js/easion.js"></script>
 
-		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>		
-		
-		<!-- Optional JavaScript -->
-		
-		<!-- Menu Toggle Script -->
-		
-		<script>
-			$('#body-row .collapse').collapse('hide');
-			$('#collapse-icon').addClass('fa-angle-double-left');
-			$('[data-toggle=sidebar-colapse]').click(function() {
-				SidebarCollapse();
-			});
-			function SidebarCollapse () {
-				$('.menu-collapsed').toggleClass('d-none');
-				$('.sidebar-submenu').toggleClass('d-none');
-				$('.submenu-icon').toggleClass('d-none');
-				$('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
-				var SeparatorTitle = $('.sidebar-separator-title');
-				if ( SeparatorTitle.hasClass('d-flex') ) {
-					SeparatorTitle.removeClass('d-flex');
-				} else {
-					SeparatorTitle.addClass('d-flex');
-				}				
-				$('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
-			}					
-		</script>
-
-		<!-- update val for target_id according what button call the delete function -->
+        <!-- update val for target_id according what button call the delete function -->
 		
 		<script>
 			$('#imgupload').on('show.bs.modal', function (event) {
@@ -576,8 +592,8 @@
 				$(this).find("#target_id").val(myVal);
 			});
 		</script>
-		
-		<!-- Edit General Info -->
+
+        <!-- Edit General Info -->
 
 		<script>		
 			$(document).ready(function(){  
@@ -607,8 +623,8 @@
 				});  	 
 			});  
 		</script>
-		
-		<!-- Send General Info -->
+
+        <!-- Send General Info -->
 		
 		<script>
 			$(document).ready(function(){
@@ -627,8 +643,8 @@
 			  });
 			});		
 		</script>
-		
-		<!-- select ribbon -->
+
+        <!-- select ribbon -->
 		
 		<script>
 			$(document).on('click', '.assig_ribbon', function(e){
@@ -652,7 +668,7 @@
 			});			
 		</script>
 
-		<!-- Edit Highlights -->
+        <!-- Edit Highlights -->
 		
 		<script>		
 			$(document).ready(function(){  
@@ -675,8 +691,8 @@
 				});  	 
 			});  
 		</script>
-		
-		<!-- Send Edit Highlights -->
+
+        <!-- Send Edit Highlights -->
 		
 		<script>
 			$(document).ready(function(){
@@ -695,8 +711,8 @@
 			  });
 			});		
 		</script>
-		
-		<!-- Edit Intro -->
+
+        <!-- Edit Intro -->
 		
 		<script>		
 			$(document).ready(function(){  
@@ -719,8 +735,8 @@
 				});  	 
 			});  
 		</script>
-		
-		<!-- Send Edit Intro -->
+
+        <!-- Send Edit Intro -->
 		
 		<script>
 			$(document).ready(function(){
@@ -739,8 +755,8 @@
 			  });
 			});		
 		</script>
-		
-		<!-- Edit Subtitle 1 -->
+
+        <!-- Edit Subtitle 1 -->
 		
 		<script>		
 			$(document).ready(function(){  
@@ -827,8 +843,8 @@
 			  });
 			});		
 		</script>
-		
-		<!-- upload images -->
+
+        <!-- upload images -->
 
 		<script type="text/javascript">
 			var fileobj;
@@ -872,8 +888,8 @@
 				}
 			}
 		</script>
-		
-		<!-- Edit carusel CAPTIONS -->
+
+        <!-- Edit carusel CAPTIONS -->
 		
 		<script>		
 			$(document).ready(function(){  
@@ -918,58 +934,105 @@
 			});		
 		</script>
 
-		<!-- delete image function -->
+        <!-- delete full program -->
 
-		<script type="application/javascript">
-			$(document).ready(function($){
-				$(document).on('click', '.delete_image', function(e){
-					e.preventDefault();
-					var rowid = $(this).attr('data-row-id');
-					var rowprg = <?php echo $prog_id; ?>;
-					var roworg = $(this).attr('data-org');
-					var dataString = 'rowid=' + rowid + '&roworg=' + roworg + '&rowprg=' + rowprg;					
-					var parent = $("#"+rowid);					
-					bootbox.dialog({
-						message: "<div class='alert alert-danger' role='alert'>Estas seguro que quieres eliminar esta imagen?</div>",
-						title: "<i class='fas fa-trash-alt'></i> Eliminar Imagen!",
-						buttons: {
-							success: {
-								label: "No",
-								className: "btn-success",
-								callback: function() {
-									$('.bootbox').modal('hide');
-								}
-							},
-							danger: {
-								label: "Eliminar",
-								className: "btn-danger",
-								callback: function() {
-									$.ajax({
-										type: 'POST',
-										url: 'delete_records.php',
-										data: dataString,
-									})
-									.done(function(response){										
-										if (roworg === "thumbimage") {
-											$("#thumbimg").html(response);
-										} else if (roworg === "mapimage") {
-											$("#mapdis").html(response);
-										} else {						
-											$("#cardis").html(response);								
-										}										
-										bootbox.alert('<div class="alert alert-success" role="alert">Imagen eliminada satisfactoriamente!</div>');										
-									})
-									.fail(function(){
-										bootbox.alert('Error. No se pudo eliminar imagen');
-									})
-								}
-							}
-						}
-					});
-				});
-			});
-		</script>
+        <script>
+            $(document).ready(function(){
+                $('.delete_program').click(function(e){
+                    e.preventDefault();
+                    var rowid = $(this).attr('data-row-id');
+                    var roworg = $(this).attr('data-org');
+                    var dataString = 'rowid=' + rowid + '&roworg=' + roworg;					
+                    bootbox.dialog({
+                        message: "<div class='alert alert-danger text-center' role='alert'><strong>Estás seguro que quieres eliminar este programa?<br />Toda la información asociada a este programa también se eliminará.</strong></div>",
+                        title: "<i class='fas fa-trash-alt text-danger'></i> Eliminar Programa!",
+                        buttons: {
+                            success: {
+                                label: "No",
+                                className: "btn-success btn-sm",
+                                callback: function() {
+                                    $('.bootbox').modal('hide');
+                                }
+                            },
+                            danger: {
+                                label: "Eliminar",
+                                className: "btn-danger btn-sm",
+                                callback: function() {
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: 'delete_records.php',
+                                        data: dataString,
+                                    })
+                                    .done(function(response){
+                                        window.location.replace("admin_programs");
+                                    })
+                                    .fail(function(){
+                                        bootbox.alert('Error. No se pudo eliminar Programa!');
+                                    })
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
 
-	</body>
+        <!-- delete image function -->
+
+        <script type="application/javascript">
+            $(document).ready(function($){
+                $(document).on('click', '.delete_image', function(e){
+                    e.preventDefault();
+                    var rowid = $(this).attr('data-row-id');
+                    var rowprg = <?php echo $prog_id; ?>;
+                    var roworg = $(this).attr('data-org');
+                    var dataString = 'rowid=' + rowid + '&roworg=' + roworg + '&rowprg=' + rowprg;					
+                    var parent = $("#"+rowid);					
+                    bootbox.dialog({
+                        message: "<div class='alert alert-danger text-center' role='alert'><strong>Estas seguro que quieres eliminar esta imagen?</strong></div>",
+                        title: "<i class='fas fa-trash-alt text-danger'></i> Eliminar Imagen!",
+                        buttons: {
+                            success: {
+                                label: "No",
+                                className: "btn-success btn-sm",
+                                callback: function() {
+                                    $('.bootbox').modal('hide');
+                                }
+                            },
+                            danger: {
+                                label: "Eliminar",
+                                className: "btn-danger btn-sm",
+                                callback: function() {
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: 'delete_records.php',
+                                        data: dataString,
+                                    })
+                                    .done(function(response){										
+                                        if (roworg === "thumbimage") {
+                                            $("#thumbimg").html(response);
+                                        } else if (roworg === "mapimage") {
+                                            $("#mapdis").html(response);
+                                        } else {						
+                                            $("#cardis").html(response);								
+                                        }										
+                                        bootbox.alert('<div class="alert alert-success" role="alert">Imagen eliminada satisfactoriamente!</div>');										
+                                    })
+                                    .fail(function(){
+                                        bootbox.alert('Error. No se pudo eliminar imagen');
+                                    })
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
+
+
+
+
+
+    </body>
 	
 </html>

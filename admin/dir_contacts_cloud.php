@@ -4,10 +4,15 @@
 	
 ?>
 
-<h4 class="mt-5 mb-4">Documentos</h4>
+<h5 class="mb-3"><strong>Documentos</strong></h5>
 
-<div class="card">
-	<h6 class="card-header"><strong><?php echo $rrows['contact_name'] . " "  . $rrows['contact_lastname']; ?></strong><button type="button" data-toggle="modal" data-target="#create_folder" class="btn btn-info btn-sm float-right">Crear Folder</button></h6>
+<div class="card easion-card h-100">
+
+	<div class="card-header d-flex justify-content-between align-items-center">
+		<div class="text-warning font-weight-bold"><?php echo $rrows['contact_name'] . " "  . $rrows['contact_lastname']; ?></div>
+		<div><button type="button" data-toggle="modal" data-target="#create_folder" class="btn btn-info btn-sm float-right"><i class="fas fa-folder-plus"></i></button></div>
+	</div>
+
 	<div class="card-body">	
 		<div class="row">
 			
@@ -30,7 +35,7 @@
 
 						echo '<div id="' . $frows['fold_id'] . '">';
 
-							$delfol = '<a data-org="delfolder" data-row-id="' . $frows['fold_id'] . '" href="javascript:void(0)" class="delete_folder ml-0" title="Eliminar Carpeta"><span aria-hidden="true" class="text-danger">&times;</span></a>';
+							$delfol = '<a data-org="delfolder" data-row-id="' . $frows['fold_id'] . '" href="javascript:void(0)" class="delete_folder ml-0" title="Eliminar Carpeta"><span aria-hidden="true" class="text-danger"><i class="fas fa-minus-circle"></i></span></a>';
 						
 							echo '<div class="col text-center">';
 									echo '<div class="text-left">' . $delfol . '</div>';

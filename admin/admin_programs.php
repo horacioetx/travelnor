@@ -1,172 +1,176 @@
 <?php
+	
+	/* admin_programs.php */
+	
+	/* db connection and session setup */
+	
+	include("check.php"); 
+	
+	/* if not logged in redirects to login page */
+	
+	if (!($_SESSION['user'])) { header('Location: login'); }	
+	
+	/* page title */
+	
+	if (isset($conrow['company_name']))	
+		$title = $conrow['company_name'] . ' - Directorio de Viajes';	
+	else	
+		$title = 'Directorio de Viajes';
 
-	//include config
-	
-	require_once('includes/config.php');
-	
-	// if not logged in redirect to login page
-	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
-	
-	// define page title
-	
-	$title = "Directorio de Programas";	
-
-	/* edit row */
-	
-	if($_POST['editar'] == "edit") {
-
-		/* update row */
-		
-		$stmt = $db->prepare('INSERT INTO dir_programs (program_code, program_name, program_classif, program_classif2, program_status) VALUES (:program_code, :program_name, :program_classif, :program_classif2, :program_status)');
-								
-		$stmt->bindParam(':program_code', $_POST['program_code']);
-		$stmt->bindParam(':program_name', $_POST['program_name']);
-		$stmt->bindParam(':program_classif', $_POST['program_classif']);
-		$stmt->bindParam(':program_classif2', $_POST['program_classif2']);
-		$stmt->bindParam(':program_status', $_POST['program_status']);
-	
-		$stmt->execute();							
-
-	}
-	
 ?>
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 	<head>
+	
+		<!-- meta tags -->
 		
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title><?php echo $title; ?></title>
 		
 		<!-- favicon -->
 		
-		<link rel="apple-touch-icon" sizes="180x180" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="images/logos/favicon.png">	
+
+
+		<!-- fonts -->
 		
-		<!-- Bootstrap CSS -->
+		<link href="https://fonts.googleapis.com/css?family=Nunito:400,600|Open+Sans:400,600,700" rel="stylesheet">		
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+
+		<!-- Custom CSS -->
 		
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-		<script src="https://kit.fontawesome.com/379421e620.js" crossorigin="anonymous"></script>
-
-		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,400i|Playfair+Display&display=swap" rel="stylesheet">
-
-		<!-- custom CSS -->
-
-		<link href="css/styles.css" rel="stylesheet">
-
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">		
+		<link rel="stylesheet" href="css/easion.css">	
+		
+		<!-- title -->
+		
 		<title><?php echo $title; ?></title>
 		
 	</head>
-	
+
 	<body>
 	
-		<!-- top navbar -->
+		<div class="dash">
 		
-		<?php include ("navbar.php"); ?>	
-		
-		<!-- sidebar and main content -->
-		
-		<div class="row" id="body-row">			
+			<!-- navbar -->
+
+			<?php include ("navbar.php"); ?>
+
+			<!-- center body -->
 			
-			<?php include ("navbar_side.php"); ?>			
-
-			<div class="col">
-				 
-				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">		
-					<nav aria-label="breadcrumb">
-						<ol class="breadcrumb">								
-							<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Directorio de Programas</li>
-						</ol>
-					</nav>							
-				</div>
+			<div class="dash-app">
 			
-				<!-- action buttons and total members -->
-	
-				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#new_prog">Agregar Programa</button>
-
-				<?php
+				<!-- header bar -->
 				
-					$stmt = $db->prepare('SELECT program_id, program_status, program_name, program_code FROM dir_programs ORDER BY program_status, program_name');
-					$stmt->execute();	
-					
-					// check if there are members
-					
-					$numitems = $stmt->rowCount();
-					
-					if ($numitems == 0) {
-					
-						echo '<div class="alert alert-danger mt-5" role="alert">';
-							echo 'Esta tabla está vacia!';
-						echo '</div>';		
-					
-					} else {
-						
-						$output = "";
-						$cont1 = 0;
-						
-						while ($rrows = $stmt->fetch(PDO::FETCH_ASSOC)) {	
-						
-							$cont1++;
-
-							/* check attendance */
-							
-							if ($rrows['program_status'] == 0)
-								$disp_status = '<span style="color:green;">Activo</span>';
-							elseif ($rrows['program_status'] == 1)
-								$disp_status = '<span style="color:red;">Inactivo</span>';
-							else
-								$disp_status = "";
-							
-							/* links to edit and delete */
-							
-							$view = '<td style="text-align: center;"><form method="post" action="admin_program_view"><input type="submit" name="additi" value="Ver" class="btn btn-success btn-sm delete_data"><input type="hidden" name="progid" value="' . $rrows['program_id'] . '"></form></td>';
-							
-							$output .= '<tr>';
-								$output .= '<td><strong>' . str_replace("<br />", " ", $rrows['program_name']) . '</strong></td><td style="text-align: center;">' . $rrows['program_code'] . '</td><td style="text-align: center;">' . $disp_status . '</td>' . $view;
-							$output .= '</tr>';
-
-						}
-						
-						echo '<p class="text-right">Total Programas : ' . $cont1 . '</p>';
-						
-						echo '<table id="table_list" class="table table-bordered table-hover">';
-							echo '<thead class="thead-dark">';
-								echo '<tr><th scope="col">Nombre del Programa</th><th scope="col" style="text-align: center;">Código</th><th scope="col" style="text-align: center;">Status</th><th scope="col" style="text-align: center;">Ver</th></tr>';
-							echo '</thead>';
-							echo '<tbody>';						
-								echo $output;							
-							echo '</tbody>';						
-						echo '</table>';
-							
-					}
+				<?php include ("header_bar.php"); ?>
 				
-				?>
+				<!-- breadcrumb -->
+				
+				<nav class="bg-light" aria-label="breadcrumb">
+					<ol class="breadcrumb">								
+						<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
+						<li class="breadcrumb-item active" aria-current="page">Directorio de Viajes</li>
+					</ol>
+				</nav>					
+
+				<!-- main content -->				
+				
+				<main class="dash-content">
+				
+					<div class="container-fluid">
 					
-			</div>	
+						<h5><strong>Directorio de Viajes</strong></h5>			
+						
+						<div class="row dash-row mt-4">							
+					
+							<div class="col">								
+					
+								<div class="container-fluid border-top border-bottom pl-0 py-3 mb-4">
+									<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#new_item">Agregar Nuevo Programa</button>	
+								</div>
+												
+								<?php
+
+                                    $stmt = $db->prepare('SELECT program_id, program_status, program_name, program_code FROM dir_programs ORDER BY program_status, program_name');
+                                    $stmt->execute();	
+
+                                    // check if there are members
+
+                                    $numitems = $stmt->rowCount();
+
+                                    if ($numitems == 0) {
+
+                                        echo '<div class="alert alert-danger mt-5" role="alert">';
+                                            echo 'Esta tabla está vacia!';
+                                        echo '</div>';		
+
+                                    } else {
+                                        
+                                        $output = "";
+                                        $cont1 = 0;
+                                        
+                                        while ($rrows = $stmt->fetch(PDO::FETCH_ASSOC)) {	
+                                        
+                                            $cont1++;
+
+                                            /* check attendance */
+                                            
+                                            if ($rrows['program_status'] == 0)
+                                                $disp_status = '<span style="color:green;">Activo</span>';
+                                            elseif ($rrows['program_status'] == 1)
+                                                $disp_status = '<span style="color:red;">Inactivo</span>';
+                                            else
+                                                $disp_status = "";
+                                            
+                                            /* links to edit and delete */
+                                            
+                                            $view = '<td style="text-align:center; width:120px;"><form method="post" action="admin_program_view"><button type="submit" name="additi" value="Ver" class="btn btn-success btn-sm delete_data"><i class="fas fa-search-plus"></i></button><input type="hidden" name="progid" value="' . $rrows['program_id'] . '"></form></td>';
+                                            
+                                            $output .= '<tr>';
+                                                $output .= '<td><strong>' . str_replace("<br />", " ", $rrows['program_name']) . '</strong></td><td style="text-align: center;">' . $rrows['program_code'] . '</td><td style="text-align: center;">' . $disp_status . '</td>' . $view;
+                                            $output .= '</tr>';
+
+                                        }                                        
+             
+                                        echo '<table id="table_list" class="table table-bordered table-hover">';
+                                            echo '<thead class="thead-dark">';
+                                                echo '<tr><th scope="col">Nombre del Programa</th><th scope="col" style="text-align: center;">Código</th><th scope="col" style="text-align: center;">Status</th><th scope="col" style="text-align: center;">Ver</th></tr>';
+                                            echo '</thead>';
+                                            echo '<tbody>';						
+                                                echo $output;							
+                                            echo '</tbody>';						
+                                        echo '</table>';
+                                            
+                                    }
+								
+								?>
+						
+							</div>
+							
+						</div>
+
+					</div>	
+					
+				</main>
+				
+			</div>
 			
-			<!-- footer -->	
-					
-			<?php include ("footer.php"); ?>	
-				
-		</div>	
+		</div>
 		
 		<!-- MODALS -->
 		
 		<!-- Add new program modal -->
 		
-		<div class="modal fade" id="new_prog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal fade" id="new_item" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		
 			<div class="modal-dialog" role="document">
 			
 				<div class="modal-content">
 				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Agregar Programa</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-map-marked-alt mr-3"></i>Agregar Programa</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -237,8 +241,8 @@
 							
 							<div class="modal-footer">
 							
-								<button type="submit" class="btn btn-primary" id="editar" name="editar" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+								<button type="submit" class="btn btn-primary btn-sm" id="editar" name="editar" value="edit">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
 						
 							</div>		
 
@@ -252,50 +256,22 @@
 			
 		</div>
 
-		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+		<!-- js -->
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
+		
+		<!-- custom js -->
+		
+		<script src="js/easion.js"></script>
 		
 		<!-- datatables -->		
 		
 		<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-		<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>		
-		
-		<!-- Optional JavaScript -->
-		
-		<!-- Menu Toggle Script -->
-		
-		<script>
-			$('#body-row .collapse').collapse('hide');
-			$('#collapse-icon').addClass('fa-angle-double-left');
-			$('[data-toggle=sidebar-colapse]').click(function() {
-				SidebarCollapse();
-			});
-			function SidebarCollapse () {
-				$('.menu-collapsed').toggleClass('d-none');
-				$('.sidebar-submenu').toggleClass('d-none');
-				$('.submenu-icon').toggleClass('d-none');
-				$('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
-				var SeparatorTitle = $('.sidebar-separator-title');
-				if ( SeparatorTitle.hasClass('d-flex') ) {
-					SeparatorTitle.removeClass('d-flex');
-				} else {
-					SeparatorTitle.addClass('d-flex');
-				}				
-				$('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
-			}					
-		</script>
-		
-		<script type="text/javascript">
-			$(document).ready(function () {
-				$('#sidebarCollapse').on('click', function () {
-					$('#sidebar').toggleClass('active');
-				});
-			});
-		</script>
-		
+		<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>	
+
 		<script>
 			$(document).ready(function() {
 				$('#table_list').DataTable();
@@ -308,7 +284,30 @@
 							sLengthMenu: "Mostrar _MENU_"},
 			});
 		</script>
+		
+        <!-- send form_new form -->
+		
+		<script>		
+			$(document).ready(function(){
+				$("form[id='form_new_prog']").submit(function(){
+					$.ajax({
+						url : 'admin_programs_add.php',
+						type : 'POST',
+						data : $(this).serialize(),
+						dataType:"json",  
+						success : function(data){	
+							if (data.stat === 1) {
+								$("#errmsg").html(data.msg);														
+							} else {
+								window.location='admin_program_view.php?progid=' + data.lastid + '&msg=' + data.msg 								
+							}	
+						}
+					});
+					return false;
+				});
+			});			
+		</script>	
+		
+	</body>	
 
-	</body>
-	
 </html>

@@ -5,9 +5,9 @@
 
 	/* refresh div */
 	
-	if ($_POST['folid'])
+	if (isset($_POST['folid']))
 		$rowid = $_POST['folid'];
-	elseif ($_POST['folder_id'])
+	elseif (isset($_POST['folder_id']))
 		$rowid = $_POST['folder_id'];
 	
 	/* retrieve name of folder */
@@ -39,7 +39,7 @@
 			
 			echo '<div id="' . $rowfile['doc_id'] . '">';
 
-				$deldoc = '<a data-org="delfile" data-row-id="' . $rowfile['doc_id'] . '" href="javascript:void(0)" class="delete_file ml-0" title="Eliminar Documento"><span aria-hidden="true" class="text-danger">&times;</span></a>';
+				$deldoc = '<a data-org="delfile" data-row-id="' . $rowfile['doc_id'] . '" href="javascript:void(0)" class="delete_file ml-0" title="Eliminar Documento"><span aria-hidden="true" class="text-danger"><i class="fas fa-minus-circle"></i></span></a>';
 			
 				echo '<div class="col text-left">';
 					echo '<a href="contacts_files/'. $rowfile['doc_name'] . '" target="_blank" class="text-dark"><i class="far fa-file-alt"></i><span class="text-left text-dark"> ' . $rowfile['doc_name'] . '</span></a><div class="float-right">' . $deldoc . '</div>';

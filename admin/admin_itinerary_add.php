@@ -1,15 +1,14 @@
 <?php
 
-	/* include config */
+	/* db connection and session setup */
 	
-	require_once('includes/config.php');
+	include("check.php"); 
 	
-	/* if not logged in redirect to login page */
+	/* if not logged in redirects to login page */
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
+	if (!($_SESSION['user'])) { header('Location: login'); }	
 	
-	/* receive vars */
-	
+	/* receive vars */	
 	
 	$stmt = $db->prepare('INSERT programs_itineraries (iti_prog_day, iti_prog_day_back, iti_prog_title, iti_prog_description, iti_prog_id) VALUES (:iti_prog_day, :iti_prog_day_back, :iti_prog_title, :iti_prog_description, :iti_prog_id)');
 							

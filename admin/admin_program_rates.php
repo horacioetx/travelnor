@@ -1,14 +1,16 @@
 <?php
 
-	/* include config */
+    /* admin_program_rates.php */
 	
-	require_once('includes/config.php');
+	/* db connection and session setup */
 	
-	/* if not logged in redirect to login page */
+	include("check.php"); 
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
+	/* if not logged in redirects to login page */
 	
-	/* receive vars */
+	if (!($_SESSION['user'])) { header('Location: login'); }	
+
+    /* receive vars */
 	
 	$prog_id = $_REQUEST['progid'];
 	
@@ -18,11 +20,15 @@
 	$stmt->execute(array(':program_id' => $prog_id));
 	
 	$rrows = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    /* page title */
 	
-	/* define page title */
-	
-	$title = str_replace("<br />", " ", $rrows['program_name']);
-	$active_page = 4;
+	if (isset($conrow['company_name']))	
+        $title = $conrow['company_name'] . ' - ' . str_replace("<br />", " ", $rrows['program_name']);
+    else	
+        $title = str_replace("<br />", " ", $rrows['program_name']);
+
+    $active_page = 4;
 
 ?>
 
@@ -31,274 +37,274 @@
 
 	<head>
 		
+		<!-- meta tags -->
+		
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title><?php echo $title; ?></title>
 		
 		<!-- favicon -->
 		
-		<link rel="apple-touch-icon" sizes="180x180" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="images/logos/favicon.png">	
+
+
+		<!-- fonts -->
 		
-		<!-- Bootstrap CSS -->
+		<link href="https://fonts.googleapis.com/css?family=Nunito:400,600|Open+Sans:400,600,700" rel="stylesheet">		
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+
+		<!-- js -->
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-		<script src="https://kit.fontawesome.com/379421e620.js" crossorigin="anonymous"></script>
+		
+		<!-- Custom CSS -->		
+		
+		<link rel="stylesheet" href="css/easion.css">	
 
-		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,400i|Playfair+Display&display=swap" rel="stylesheet">
-
-		<!-- custom CSS -->
-
-		<link href="css/styles.css" rel="stylesheet">
-
+		<!-- title -->
+		
 		<title><?php echo $title; ?></title>
 		
 	</head>
 	
 	<body>
 	
-		<!-- top navbar -->
-		
-		<?php include ("navbar.php"); ?>	
-		
-		<!-- sidebar and main content -->
-		
-		<div class="row" id="body-row">			
+		<div class="dash">
 			
-			<?php include ("navbar_side.php"); ?>			
+			<!-- navbar -->
 
-			<div class="col mb-5">
-				 
-				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">		
-					<nav aria-label="breadcrumb">
-						<ol class="breadcrumb">								
-							<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
-							<li class="breadcrumb-item"><a href="admin_programs">Directorio de Programas</a></li>
-							<li class="breadcrumb-item"><a href="admin_program_view?progid=<?php echo $prog_id; ?>"><?php echo $title; ?></a></li>
-							<li class="breadcrumb-item active" aria-current="page">Tarifas</a></li>
-						</ol>
-					</nav>							
-				</div>		
-				
-				<?php include("program_subnav.php"); ?>
+			<?php include ("navbar.php"); ?>
 
-				<div class="card">
-					<div class="card-body">
-						<h1 class="card-title"><?php echo str_replace("<br />", " ", $rrows['program_name']); ?></h1>
-					</div>
-				</div>
-		
-				<!-- action buttons and total members -->
-
-				<button type="button" class="btn btn-success mt-3" data-toggle="modal" data-target="#new_iti">Agregar Tarifa</button>
-
-				<div id="table_disp">
-
-					<?php include 'admin_program_rates_disp.php'; ?>
-					
-				</div>
-					
-			</div>	
+			<!-- center body -->
 			
-			<!-- footer -->	
-					
-			<?php include ("footer.php"); ?>	
-				
-		</div>	
-		
-		<!-- MODALS -->		
-		
-		<!-- Add new hotel -->
-		
-		<div class="modal fade" id="new_iti" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		
-			<div class="modal-dialog" role="document">
+			<div class="dash-app">
 			
-				<div class="modal-content">
+				<!-- header bar -->
 				
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Agregar Tarifa a Programa</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					
-					<form id="form_add_rate" method="post" action="admin">	
-					
-						<div class="modal-body">								
+				<?php include ("header_bar.php"); ?>
+				
+				<!-- breadcrumb -->
+				
+				<nav class="bg-light" aria-label="breadcrumb">
+					<ol class="breadcrumb">								
+						<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
+						<li class="breadcrumb-item"><a href="admin_programs">Directorio de Viajes</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><?php echo str_replace('<br />', ' ', $rrows['program_name']); ?></li>						
+					</ol>
+				</nav>					
 
-							<div class="form-row">								
-								<div class="col">
-									<label for="program_rate_catego" class="col-form-label">Categoria : </label>
-									<select class="custom-select mr-sm-2" id="program_rate_catego" name="program_rate_catego">
-										<?php
-										
-											$stmt_ct = $db->prepare('SELECT * FROM dir_hotels_categories ORDER BY cat_order');	
-											$stmt_ct->execute();
-											
-											while ($rowcat = $stmt_ct->fetch(PDO::FETCH_ASSOC)){
-												echo '<option value="' . $rowcat['cat_id'] . '">' . $rowcat['cat_name'] . '</option>';
-											}
-											
-										?>
-									</select>
-								</div>
-							</div>	
+				<!-- main content -->				
+				
+				<main class="dash-content">
+				
+					<div class="container-fluid">
 
-							<div class="form-row">								
-								<div class="col">
-									<label for="program_rates_rate" class="col-form-label">Tarifa :</label>
-									<input type="number" id="program_rates_rate" name="program_rates_rate" step="0.01" class="form-control" value="0">
-								</div>
-							</div>	
-							
-							<div class="form-row">
-								<div class="col">
-									<label for="program_rates_feature" class="col-form-label">Destacado :</label>
-									<select class="custom-select mr-sm-2" id="program_rates_feature" name="program_rates_feature">
-										<option value="0" class="text-danger">Tarifa NO Destacada</option>
-										<option value="1" class="text-success">Tarifa Destacada</option>
-									</select>
-								</div>
-							</div>
-							
-							<div class="form-row">								
-								<div class="col">
-									<label for="program_rates_note" class="col-form-label">Notas :</label>
-									<textarea class="form-control" id="program_rates_note" name="program_rates_note" rows="5"></textarea>
-								</div>
-							</div>	
+                        <div class="row">						
+                            <div class="col">
+                                <?php include("program_subnav.php"); ?>                                
+                            </div>
+                        </div>
 
-							<div class="modal-footer">
-							
-								<input type="hidden" id="program_rates_program" name="program_rates_program" value="<?php echo $prog_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editar" name="editar" value="add">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-						
-							</div>		
+                        <div class="row">						
+                            <div class="col">
 
-						</div>	
-							
-					</form>						
+                                <div class="jumbotron jumbotron-fluid mt-4 py-2 border-top border-bottom bg-transparent">
+                                    <div class="container ml-0 pl-0">
+                                        <h2 class="text-dark">Programa : <span class="text-success"><?php echo str_replace("<br />", " ", $rrows['program_name']); ?></span></h2>
+                                    </div>
+                                </div>
+                                
+                                <!-- action buttons -->
 
-				</div>
+                                <button type="button" class="btn btn-success btn-sm mt-2" data-toggle="modal" data-target="#new_iti">Agregar Tarifa</button>
+
+                                <div id="table_disp">
+
+                                    <?php include 'admin_program_rates_disp.php'; ?>
+                                    
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>		
+
+				</main>
 				
 			</div>
 			
 		</div>		
-		
-		<!-- Edit program modal -->
-		
-		<div class="modal fade" id="edit_iti" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		
-			<div class="modal-dialog" role="document">
-			
-				<div class="modal-content">
-				
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Tarifa</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					
-					<form id="form_edit_rate" method="post" action="admin" autocomplete="off">	
-					
-						<div class="modal-body">	
 
-							<div class="form-row">								
-								<div class="col">
-									<label for="e_program_rate_catego" class="col-form-label">Categoria : </label>
-									<select class="custom-select mr-sm-2" id="e_program_rate_catego" name="e_program_rate_catego">
-										<?php
-										
-											$stmt_ct = $db->prepare('SELECT * FROM dir_hotels_categories ORDER BY cat_order');	
-											$stmt_ct->execute();
-											
-											while ($rowcat = $stmt_ct->fetch(PDO::FETCH_ASSOC)){
-												echo '<option value="' . $rowcat['cat_id'] . '">' . $rowcat['cat_name'] . '</option>';
-											}
-											
-										?>
-									</select>
-								</div>
-							</div>	
+		<!-- MODALS -->
 
-							<div class="form-row">								
-								<div class="col">
-									<label for="e_program_rates_rate" class="col-form-label">Tarifa :</label>
-									<input type="number" id="e_program_rates_rate" name="e_program_rates_rate" step="0.01" class="form-control" value="0">
-								</div>
-							</div>	
-							
-							<div class="form-row">
-								<div class="col">
-									<label for="e_program_rates_feature" class="col-form-label">Destacado :</label>
-									<select class="custom-select mr-sm-2" id="e_program_rates_feature" name="e_program_rates_feature">
-										<option value="0" class="text-danger">Tarifa NO Destacada</option>
-										<option value="1" class="text-success">Tarifa Destacada</option>
-									</select>
-								</div>
-							</div>							
-							
-							<div class="form-row">								
-								<div class="col">
-									<label for="e_program_rates_note" class="col-form-label">Notas :</label>
-									<textarea class="form-control" id="e_program_rates_note" name="e_program_rates_note" rows="5"></textarea>
-								</div>
-							</div>	
-							
-							<div class="modal-footer">
-							
-								<input type="hidden" id="e_program_rates_id" name="e_program_rates_id" value="">
-								<input type="hidden" id="e_program_rates_program" name="e_program_rates_program" value="">
-								<button type="submit" class="btn btn-primary" id="editar" name="editar" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-						
-							</div>		
-
-						</div>	
-							
-					</form>						
-
-				</div>
-				
-			</div>
-			
-		</div>
-
-		<!-- jQuery first, Popper.js, Bootstrap JS -->
-		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>	
+        <!-- Add new rate modal -->
 		
-		<!-- Optional JavaScript -->
+		<div class="modal fade" id="new_iti" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		
-		<!-- Menu Toggle Script -->
+            <div class="modal-dialog" role="document">
+            
+                <div class="modal-content">
+                
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Agregar Tarifa a Programa</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <form id="form_add_rate" method="post" action="admin">	
+                    
+                        <div class="modal-body">								
+
+                            <div class="form-row">								
+                                <div class="col">
+                                    <label for="program_rate_catego" class="col-form-label">Categoria : </label>
+                                    <select class="custom-select mr-sm-2" id="program_rate_catego" name="program_rate_catego">
+                                        <?php
+                                        
+                                            $stmt_ct = $db->prepare('SELECT * FROM dir_hotels_categories ORDER BY cat_order');	
+                                            $stmt_ct->execute();
+                                            
+                                            while ($rowcat = $stmt_ct->fetch(PDO::FETCH_ASSOC)){
+                                                echo '<option value="' . $rowcat['cat_id'] . '">' . $rowcat['cat_name'] . '</option>';
+                                            }
+                                            
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>	
+
+                            <div class="form-row">								
+                                <div class="col">
+                                    <label for="program_rates_rate" class="col-form-label">Tarifa :</label>
+                                    <input type="number" id="program_rates_rate" name="program_rates_rate" step="0.01" class="form-control" value="0">
+                                </div>
+                            </div>	
+                            
+                            <div class="form-row">
+                                <div class="col">
+                                    <label for="program_rates_feature" class="col-form-label">Destacado :</label>
+                                    <select class="custom-select mr-sm-2" id="program_rates_feature" name="program_rates_feature">
+                                        <option value="0" class="text-danger">Tarifa NO Destacada</option>
+                                        <option value="1" class="text-success">Tarifa Destacada</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">								
+                                <div class="col">
+                                    <label for="program_rates_note" class="col-form-label">Notas :</label>
+                                    <textarea class="form-control" id="program_rates_note" name="program_rates_note" rows="5"></textarea>
+                                </div>
+                            </div>	
+
+                            <div class="modal-footer">
+                            
+                                <input type="hidden" id="program_rates_program" name="program_rates_program" value="<?php echo $prog_id; ?>">
+                                <button type="submit" class="btn btn-primary btn-sm" id="editar" name="editar" value="add">Guardar</button>
+                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+                        
+                            </div>		
+
+                        </div>	
+                            
+                    </form>						
+
+                </div>
+                
+            </div>
+            
+        </div>		
+        
+        <!-- Edit rate modal -->
+        
+        <div class="modal fade" id="edit_iti" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        
+            <div class="modal-dialog" role="document">
+            
+                <div class="modal-content">
+                
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Tarifa</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <form id="form_edit_rate" method="post" action="admin" autocomplete="off">	
+                    
+                        <div class="modal-body">	
+
+                            <div class="form-row">								
+                                <div class="col">
+                                    <label for="e_program_rate_catego" class="col-form-label">Categoria : </label>
+                                    <select class="custom-select mr-sm-2" id="e_program_rate_catego" name="e_program_rate_catego">
+                                        <?php
+                                        
+                                            $stmt_ct = $db->prepare('SELECT * FROM dir_hotels_categories ORDER BY cat_order');	
+                                            $stmt_ct->execute();
+                                            
+                                            while ($rowcat = $stmt_ct->fetch(PDO::FETCH_ASSOC)){
+                                                echo '<option value="' . $rowcat['cat_id'] . '">' . $rowcat['cat_name'] . '</option>';
+                                            }
+                                            
+                                        ?>
+                                    </select>
+                                </div>
+                            </div>	
+
+                            <div class="form-row">								
+                                <div class="col">
+                                    <label for="e_program_rates_rate" class="col-form-label">Tarifa :</label>
+                                    <input type="number" id="e_program_rates_rate" name="e_program_rates_rate" step="0.01" class="form-control" value="0">
+                                </div>
+                            </div>	
+                            
+                            <div class="form-row">
+                                <div class="col">
+                                    <label for="e_program_rates_feature" class="col-form-label">Destacado :</label>
+                                    <select class="custom-select mr-sm-2" id="e_program_rates_feature" name="e_program_rates_feature">
+                                        <option value="0" class="text-danger">Tarifa NO Destacada</option>
+                                        <option value="1" class="text-success">Tarifa Destacada</option>
+                                    </select>
+                                </div>
+                            </div>							
+                            
+                            <div class="form-row">								
+                                <div class="col">
+                                    <label for="e_program_rates_note" class="col-form-label">Notas :</label>
+                                    <textarea class="form-control" id="e_program_rates_note" name="e_program_rates_note" rows="5"></textarea>
+                                </div>
+                            </div>	
+                            
+                            <div class="modal-footer">
+                            
+                                <input type="hidden" id="e_program_rates_id" name="e_program_rates_id" value="">
+                                <input type="hidden" id="e_program_rates_program" name="e_program_rates_program" value="">
+                                <button type="submit" class="btn btn-primary btn-sm" id="editar" name="editar" value="edit">Guardar</button>
+                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>
+                        
+                            </div>		
+
+                        </div>	
+                            
+                    </form>						
+
+                </div>
+                
+            </div>
+            
+        </div>
+
+        <!-- js -->
 		
-		<script>
-			$('#body-row .collapse').collapse('hide');
-			$('#collapse-icon').addClass('fa-angle-double-left');
-			$('[data-toggle=sidebar-colapse]').click(function() {
-				SidebarCollapse();
-			});
-			function SidebarCollapse () {
-				$('.menu-collapsed').toggleClass('d-none');
-				$('.sidebar-submenu').toggleClass('d-none');
-				$('.submenu-icon').toggleClass('d-none');
-				$('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
-				var SeparatorTitle = $('.sidebar-separator-title');
-				if ( SeparatorTitle.hasClass('d-flex') ) {
-					SeparatorTitle.removeClass('d-flex');
-				} else {
-					SeparatorTitle.addClass('d-flex');
-				}				
-				$('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
-			}					
-		</script>	
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
+		
+		<!-- custom js -->
+		
+		<script src="js/easion.js"></script>
 		
 		<!-- sends add form -->
 		
@@ -364,7 +370,7 @@
 			  });
 			});		
 		</script>
-		
+
 		<!-- delete items -->
 
 		<script type="application/javascript">
@@ -377,19 +383,19 @@
 					var dataString = 'rowid=' + rowid + '&roworg=' + roworg + '&rowprg=' + rowprg;					
 					var parent = $("#"+rowid);					
 					bootbox.dialog({
-						message: "<div class='alert alert-danger' role='alert'>Estas seguro que quieres eliminar este item?</div>",
-						title: "<i class='fas fa-trash-alt'></i> Eliminar Item!",
+						message: "<div class='alert alert-danger text-center' role='alert'><strong>Estas seguro que quieres eliminar este item?</strong></div>",
+						title: "<i class='fas fa-trash-alt text-danger'></i> Eliminar Item!",
 						buttons: {
 							success: {
 								label: "No",
-								className: "btn-success",
+								className: "btn-success btn-sm",
 								callback: function() {
 									$('.bootbox').modal('hide');
 								}
 							},
 							danger: {
 								label: "Eliminar",
-								className: "btn-danger",
+								className: "btn-danger btn-sm",
 								callback: function() {
 									$.ajax({
 										type: 'POST',
@@ -409,8 +415,9 @@
 					});
 				});
 			});
-		</script>
 
-	</body>
+		</script>        
+
+    </body>
 	
 </html>

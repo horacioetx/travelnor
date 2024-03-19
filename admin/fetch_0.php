@@ -1,6 +1,14 @@
 <?php  
 
-	require('includes/config.php');
+	/* db connection and session setup */
+	
+	include("check.php"); 
+	
+	/* if not logged in redirects to login page */
+	
+	if (!($_SESSION['user'])) { header('Location: login'); }
+
+	/* fetch data */
 	
 	if(isset($_POST["prg_id"])) {
 	

@@ -2,28 +2,113 @@
 
 	/*** delete records ***/
 	
-	/* include config */
+	/* db connection and session setup */
 	
-	require_once('includes/config.php');
+	include("check.php"); 
 	
-	/* if not logged in redirect to login page */
+	/* if not logged in redirects to login page */
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }	
+	if (!($_SESSION['user'])) { header('Location: login'); }
 	
-	switch($_POST['roworg']) {
+	switch($_POST['roworg']) {	
+
+		case "tasks-del" :
+
+			if($_POST['rowid']) {
+				
+				$rowid = $_POST['rowid'];
+
+				$stmt = $db->prepare( "DELETE FROM todo WHERE task_id = :id" );
+				$stmt->bindParam(':id', $rowid);
+				$stmt->execute();				
+				
+				include 'todolist.php';	
+
+			}
+
+			break;
+
+		case "gentxt_rate" :
+
+			if($_POST['rowid']) {
+				
+				$rowid = $_POST['rowid'];
+
+				$stmt = $db->prepare( "DELETE FROM dir_programs_gt WHERE gt_id = :id" );
+				$stmt->bindParam(':id', $rowid);
+				$stmt->execute();				
+				
+				include 'admin_generic_txt_rates.php';	
+
+			}
+
+			break;
+
+			case "gentxt_hotel" :
+
+				if($_POST['rowid']) {
+					
+					$rowid = $_POST['rowid'];
+	
+					$stmt = $db->prepare( "DELETE FROM dir_programs_gt WHERE gt_id = :id" );
+					$stmt->bindParam(':id', $rowid);
+					$stmt->execute();				
+					
+					include 'admin_generic_txt_hotels.php';	
+	
+				}
+	
+				break;
+
+			case "gentxt_extension" :
+
+				if($_POST['rowid']) {
+					
+					$rowid = $_POST['rowid'];
+	
+					$stmt = $db->prepare( "DELETE FROM dir_programs_gt WHERE gt_id = :id" );
+					$stmt->bindParam(':id', $rowid);
+					$stmt->execute();				
+					
+					include 'admin_generic_txt_extensions.php';	
+	
+				}
+	
+				break;
+
+		case "hotcat" :
+
+			if($_POST['rowid']) {
+				
+				$rowid = $_POST['rowid'];
+
+				$stmt = $db->prepare( "DELETE FROM dir_hotels_categories WHERE cat_id = :id" );
+				$stmt->bindParam(':id', $rowid);
+				$stmt->execute();				
+				
+				echo '<div class="alert alert-success" role="alert">Item eliminado satisfactoriamente!</div>';	
+
+			}
+
+			break;
 
 		case "subcontact" :
 
 			if($_POST['rowid']) {
 				
 				$rowid = $_POST['rowid'];
+				$main = $_POST['rowmain'];
+				$type = $_POST['rowtype'];
 
 				$stmt = $db->prepare( "DELETE FROM dir_subcontacts WHERE subcontact_id = :id" );
 				$stmt->bindParam(':id', $rowid);
 				$stmt->execute();
 
-				echo '<div class="alert alert-success" role="alert">Subcontacto eliminado satisfactoriamente!</div>';	
-				
+				$_REQUEST['contact_id'] = $main;
+				$ctc_type = $type;
+
+				include ("dir_contacts_specific_disp.php");
+
 			}
 
 			break;
@@ -43,6 +128,12 @@
 				$stmt = $db->prepare( "DELETE FROM dir_subcontacts WHERE subcontact_contact = :id" );
 				$stmt->bindParam(':id', $rowid);
 				$stmt->execute();
+
+
+				/* deletes folders and documents */
+
+				/*** FALTA ***/
+				
 				
 				echo '<div class="alert alert-success" role="alert">Contacto y subcontactos eliminados satisfactoriamente!</div>';	
 				
@@ -655,6 +746,51 @@
 				
 			}
 
+			break;
+
+		case "ticker" :
+
+			$rowid = 1;
+
+			/* retrieve name of file to delete */				
+			
+			$stmt = $db->prepare('SELECT ticker_img FROM config WHERE config_id = :config_id');	
+			$stmt->execute(array(':config_id' => $rowid));	
+			$rrows = $stmt->fetch(PDO::FETCH_ASSOC);
+
+			$filename = $rrows['ticker_img'];
+
+			/* connect FTP */	
+
+			$stmt_conf = $db->prepare('SELECT ftp_username8, ftp_userpass2 FROM config');	
+			$stmt_conf->execute();
+			$row_conf = $stmt_conf->fetch(PDO::FETCH_ASSOC);	
+			
+			$ftp_username = $row_conf['ftp_username8'];
+			$ftp_userpass = $row_conf['ftp_userpass2'];		
+			
+			/* delete file from server */
+			
+			$ftp_server = "ftp.nddinfosystems.com";
+			$ftp_conn = ftp_connect($ftp_server) or die("Could not connect to $ftp_server");
+			$login = ftp_login($ftp_conn, $ftp_username, $ftp_userpass);
+			
+			/* delete file from server */
+		
+			ftp_delete($ftp_conn, $filename);
+
+			/* close connection */
+			
+			ftp_close($ftp_conn);
+
+			/* update file name with null */
+
+			$stmt2 = $db->prepare( "UPDATE config SET ticker_img = :ticker_img WHERE config_id = :config_id" );
+
+			$stmt2->bindValue(':ticker_img', null);
+			$stmt2->bindParam(':config_id', $rowid);
+			$stmt2->execute();
+	
 			break;
 
 	}

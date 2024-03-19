@@ -1,16 +1,15 @@
 <?php
 
-	/* include config */
+	/* db connection and session setup */
 	
-	require_once('includes/config.php');
+	include("check.php"); 
 	
-	/* if not logged in redirect to login page */
+	/* if not logged in redirects to login page */
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
-	
+	if (!($_SESSION['user'])) { header('Location: login'); }
+
 	/* receive vars */
-	
-	
+		
 	$stmt = $db->prepare('INSERT dir_programs_rates (program_rate_catego, program_rates_rate, program_rates_feature, program_rates_note, program_rates_program) VALUES (:program_rate_catego, :program_rates_rate, :program_rates_feature, :program_rates_note, :program_rates_program)');
 							
 	$stmt->execute(array(':program_rate_catego' => $_POST['program_rate_catego'],

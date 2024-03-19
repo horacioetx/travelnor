@@ -1,12 +1,14 @@
 <?php
 
-	/* include config */
+	/* db connection and session setup */
 	
-	require_once('includes/config.php');
+	include("check.php"); 
 	
-	/* if not logged in redirect to login page */
+	/* if not logged in redirects to login page */
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
+	if (!($_SESSION['user'])) { header('Location: login'); }
+	
+	/* fetch data */
 	
 	/* receive vars */	
 	

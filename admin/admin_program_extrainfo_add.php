@@ -1,13 +1,13 @@
 <?php
 
-	/* include config */
+	/* db connection and session setup */
 	
-	require_once('includes/config.php');
+	include("check.php"); 
 	
-	/* if not logged in redirect to login page */
+	/* if not logged in redirects to login page */
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
-	
+	if (!($_SESSION['user'])) { header('Location: login'); }
+
 	/* receive vars */	
 	
 	$stmt = $db->prepare('INSERT dir_programs_extrainfo (prog_ext_prog, prog_ext_descrip) VALUES (:prog_ext_prog, :prog_ext_descrip)');
@@ -20,3 +20,5 @@
 	$prog_id = $_POST['prog_ext_prog'];
 
 	include 'admin_program_extrainfo_disp.php';
+
+?>

@@ -1,307 +1,197 @@
 <?php
-
-	//include config
 	
-	require_once('includes/config.php');
+	/* dir_users.php */
 	
-	// if not logged in redirect to login page
+	/* db connection and session setup */
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
+	include("check.php"); 
 	
-	//define page title
+	/* if not logged in redirects to login page */
 	
-	$title = "Directorio de Usuarios";
+	if (!($_SESSION['user'])) { header('Location: login'); }	
 	
-	/* save new user */
+	/* page title */
 	
-	/* member registration form has been submitted process with validation and save record */
+	if (isset($conrow['company_name']))	
+		$title = $conrow['company_name'] . ' - Directorio de Usuarios';	
+	else	
+		$title = 'Directorio de Usuario';
 
-	if($_POST['register'] == "register") {
-
-		if(strlen($_POST['username']) < 5) {
-			
-			$msg = 'Nombre de usuario muy corto! Intenta con 5 caracteres o más.';
-			header("Location: dir_users?&errmsg=$msg");
-			exit();
-			
-		} 		
-					
-		$stmt = $db->prepare('SELECT username FROM members WHERE username = :username');
-		$stmt->execute(array(':username' => $_POST['username']));
-		$row = $stmt->fetch(PDO::FETCH_ASSOC);
-		
-		if($row['username']){				
-			$msg = 'Nombre de usuario ya existe! Intenta con otro';	
-			header("Location: dir_users?&errmsg=$msg");
-			exit();
-		}
-	
-		$stmt = $db->prepare('SELECT email FROM members WHERE email = :email');
-		$stmt->execute(array(':email' => $_POST['email']));
-		$row = $stmt->fetch(PDO::FETCH_ASSOC);
-		
-		if($row['email']){
-			$msg = 'Este email ya esta registrado! Intenta con otro';
-			header("Location: dir_users?&errmsg=$msg");
-			exit();
-		}
-		
-		if(strlen($_POST['password']) < 5) {
-			
-			$msg = 'Password muy corto! Intenta con 5 caracteres o más.';
-			header("Location: dir_users?&errmsg=$msg");
-			exit();
-			
-		} 	
-		
-		/* Everything validate and proceed registration */
-			
-		/* hash the password */
-		
-		$hashedpassword = $user->password_hash($_POST['password'], PASSWORD_BCRYPT);
-		
-		//insert into database with a prepared statement	
-
-		$stmt = $db->prepare('INSERT INTO members (first_name, last_name, username, password, email, level, active) VALUES (:first_name, :last_name, :username, :password, :email, :level, :active)');
-		$stmt->execute(array(
-			':first_name' => $_POST['first_name'],
-			':last_name' => $_POST['last_name'],
-			':username' => $_POST['username'],
-			':password' => $hashedpassword,
-			':email' => $_POST['email'],
-			':level' => $_POST['level'],
-			':active' => "yes"));
-
-		/* sends email to new user with registration information */
-		
-		$message = '<!DOCTYPE html>
-					<html lang="es">
-						<head>
-							  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-							  <title>Registro en mishyjoaco.com</title>
-							  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-						</head>
-
-						<body style="margin: 0; padding: 0; font-family: Verdana, Calibri, Arial, Helvetica Neue,Segoe UI,Helvetica, Lucida Grande ,sans-serif; font-size: 15px;">
-						
-							<div style="width:600px; margin: 0 auto; padding: 10px 0 0 0;">
-						
-								<table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; border: none;">
-								
-									<tr>
-										<td align="center" style="padding: 20px 0 15px 0;">
-											<img src="http://www.travelnor.com/dashboard/html/images/logos/logo.png" alt="Logo" style="width:150px; height: auto; display: block;" />
-										</td>
-									</tr>
-									
-									<tr> 
-										<td align="center" style="padding: 10px 0 20px 0; text-align: center; line-height: 30px; font-size: 110%; font-weight:700;">Hola ' . $_POST['first_name'] . ' ' .  $_POST['last_name'] . '</td>
-									</tr>
-									
-									<tr>
-										<td align="left" style="text-align:center; line-height:25px;; padding: 5px 10px 20px 10px;">Has sido registrado en el sistema de Travelnor. A continuación encontrarás tus credenciales de acceso.</td>
-									
-									</tr>
-									
-									<tr>								
-										<td align="center" style="text-align:center; line-height:50px; padding: 0;">	
-										
-											<div style="margin:1em; border-top:1px solid #ccc; border-bottom:1px solid #ccc;">
-									
-												<table align="center" border="0" cellpadding="0" cellspacing="0" style="width: 100%; margin: 10px; border-collapse: collapse; border: none;">
-										
-													<tr>
-														<td align="right" valign="top" style="text-align:right; line-height:20px; padding: 5px 0; width:50%; font-weight:700;">Nombre de Usuario : </td>
-														<td align="left" style="text-align:left; line-height:20px; padding: 5px 0 5px 5px; width:50%;"> ' . $_POST['username']. '</td>
-													</tr>
-													<tr>
-														<td align="right" valign="top" style="text-align:right; line-height:20px; padding: 5px 0; font-weight:700;">Contraseña : </td>
-														<td align="left" style="text-align:left; line-height:20px; padding: 5px 0 5px 5px;"> ' . $_POST['password'] . '</td>
-													</tr>	
-													<tr>
-														<td align="right" valign="top" style="text-align:right; line-height:20px; padding: 5px 0; font-weight:700;">URL de Acceso : </td>
-														<td align="left" style="text-align:left; line-height:20px; padding: 5px 0 5px 5px;"><a href="www.travelnor.com/dashboard/html/login.php">www.travelnor.com/dashboard/html/login.php</a></td>
-													</tr>	
-													
-												</table>
-												
-											</div>
-											
-										</td>
-										
-									</tr>		
-
-									<tr>
-										<td align="center" style="font-size:70%; font-weight:400; text-align: center; padding: 3px 0; backgound-color:#fff;">Travelnor.com Dashboard. All rights reserved. Powered by NDDInfosystems</td>
-									</tr>
-									
-								</table>
-								
-							</div>
-								
-						</body>
-						
-					</html>';
-
-		/* assign headers to email */
-		
-		$from = "admin@cucoa.com";
-		$to2 = $_POST['email'];
-		$subject = "Has sido registrado en travelnor.com Dashboard";
-		
-		$headers   = array();
-		$headers[] = "MIME-Version: 1.0";
-		$headers[] = "Content-type: text/html; charset=UTF-8";		
-		$headers[] = "From: " . $from . "<" . $from . ">";
-		$headers[] = "Reply-To: Recipient Name <" . $from . ">";
-		$headers[] = "Subject: {$subject}";
-		$headers[] = "X-Priority: 1";
-		$headers[] = "X-Mailer: PHP/".phpversion();
-
-		mail($to2, $subject, $message, implode("\r\n", $headers));
-
-		header("Location: dir_users?okmsg=Usuario registrado!");
-		
-	}
-
-	
-	
 ?>
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 	<head>
+	
+		<!-- meta tags -->
 		
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title><?php echo $title; ?></title>
 		
 		<!-- favicon -->
 		
-		<link rel="apple-touch-icon" sizes="180x180" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="images/logos/favicon.png">	
+
+
+		<!-- fonts -->
 		
-		<!-- Bootstrap CSS -->
+		<link href="https://fonts.googleapis.com/css?family=Nunito:400,600|Open+Sans:400,600,700" rel="stylesheet">		
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+
+		<!-- Custom CSS -->
 		
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-		<script src="https://kit.fontawesome.com/379421e620.js" crossorigin="anonymous"></script>
-
-		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,400i|Playfair+Display&display=swap" rel="stylesheet">		
-
-		<!-- custom CSS -->
-
-		<link href="css/styles.css" rel="stylesheet">
-
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">		
+		<link rel="stylesheet" href="css/easion.css">	
+		
+		<!-- title -->
+		
 		<title><?php echo $title; ?></title>
 		
 	</head>
-	
+
 	<body>
 	
-		<!-- top navbar -->
+		<div class="dash">
 		
-		<?php include ("navbar.php"); ?>	
-		
-		<!-- sidebar and main content -->
-		
-		<div class="row" id="body-row">			
+			<!-- navbar -->
+
+			<?php include ("navbar.php"); ?>
+
+			<!-- center body -->
 			
-			<?php include ("navbar_side.php"); ?>			
-
-			<div class="col">
-				 
-				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">		
-					<nav aria-label="breadcrumb">
-						<ol class="breadcrumb">								
-							<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Directorio de Usuarios</li>
-						</ol>
-					</nav>							
-				</div>
-	
-				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#newuser">Agregar Usuario</button>
-
-				<?php
-				
-					$stmt = $db->prepare('SELECT memberID, first_name, last_name, username, email, level FROM members ORDER BY first_name');
-					$stmt->execute();	
-					
-					$numitems = $stmt->rowCount();
-					
-					if ($numitems == 0) {
-					
-						echo '<div class="alert alert-danger mt-5" role="alert">';
-							echo 'Esta tabla está vacia!';
-						echo '</div>';		
-					
-					} else {
-						
-						$output = "";
-						$cont1 = 0;
-						
-						while ($rrows = $stmt->fetch(PDO::FETCH_ASSOC)) {	
-						
-							$cont1++;
-							
-							$disp_name = $rrows['first_name'] . " " . $rrows['last_name'];
-							
-							if ($rrows['level'] == 2)
-								$disp_level = "Administrador";
-							elseif ($rrows['level'] == 1)
-								$disp_level = "Webmaster";
-							elseif ($rrows['level'] == 0)
-								$disp_level = "Colaborador";
-							
-							/* links to edit and delete */
-							
-							$edit = '<td style="text-align: center;"><input type="button" name="edit" value="Editar" id="' . $rrows['memberID'] . '" class="btn btn-info btn-sm edit_data" /></td>';
-							
-					//		$edit = '<td style="text-align: center;"><input type="button" name="edit" value="Editar" subid="' . $rrows_x['subcontact_id'] . '" class="btn btn-info btn-sm edit_data_sub float-right" disabled>';
-							
-							
-							$output .= '<tr>';
-								$output .= '<td>' . $disp_name . '</td><td>' . $rrows['username'] . '</td><td style="text-align: left;"><a href="mailto:' . $rrows['email']  . '" style="color:#0056b3;">' . $rrows['email'] . '</a></td><td style="text-align: center;">' . $disp_level . '</td>' . $edit;
-							$output .= '</tr>';
-
-						}
-						
-						echo '<p class="text-right">Número de Usuarios : ' . $cont1 . '</p>';
-						
-						echo '<table id="table_list" class="table table-bordered table-hover">';
-							echo '<thead class="thead-dark">';
-								echo '<tr><th scope="col">Usuario</th><th scope="col" style="text-align: center;">Nombre de Usuario</th><th scope="col" style="text-align: center;">Email</th><th scope="col" style="text-align: center;">Nivel</th><th scope="col" style="text-align: center;">Ver</th></tr>';
-							echo '</thead>';
-							echo '<tbody>';						
-								echo $output;							
-							echo '</tbody>';						
-						echo '</table>';
-							
-					}
-				
-				?>
-
-			</div>	
+			<div class="dash-app">
 			
-			<!-- footer -->	
-					
-			<?php include ("footer.php"); ?>	
+				<!-- header bar -->
 				
-		</div>			
+				<?php include ("header_bar.php"); ?>
+				
+				<!-- breadcrumb -->
+				
+				<nav class="bg-light" aria-label="breadcrumb">
+					<ol class="breadcrumb">								
+						<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
+						<li class="breadcrumb-item active" aria-current="page">Directorio de Usuarios</li>
+					</ol>
+				</nav>					
+
+				<!-- main content -->				
+				
+				<main class="dash-content">
+				
+					<div class="container-fluid">
+					
+						<h5><strong>Directorio de Usuarios</strong></h5>			
+						
+						<div class="row dash-row mt-4">							
+					
+							<div class="col">								
+					
+								<div class="container-fluid border-top border-bottom pl-0 py-3 mb-4">
+									<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#new_item">Agregar Nuevo Usuario</button>	
+								</div>
+												
+								<?php
+						
+									$stmt = $db->prepare('SELECT id, first_name, last_name, email, level FROM utenti ORDER BY first_name');
+									$stmt->execute();	
+									
+									$numitems = $stmt->rowCount();
+									
+									if ($numitems == 0) {
+									
+										echo '<div class="alert alert-danger mt-5" role="alert">';
+											echo 'This table is empty!';
+										echo '</div>';		
+									
+									} else {
+										
+										$output = "";
+										
+										while ($rrows = $stmt->fetch(PDO::FETCH_ASSOC)) {	
+											
+											$disp_name = $rrows['first_name'] . " " . $rrows['last_name'];
+											
+											if ($rrows['level'] == 2)
+												$disp_level = "Administrator";
+											elseif ($rrows['level'] == 1)
+												$disp_level = "Webmaster";
+											elseif ($rrows['level'] == 0)
+												$disp_level = "Collaborator";
+												
+											/* retrieve last login */
+											
+											$access = 1;
+											$stmt_lastlog = $db->prepare('SELECT data FROM log_accessi WHERE mail_immessa = :mail_immessa AND accesso = :accesso ORDER BY data DESC LIMIT 1,1');
+											$stmt_lastlog->execute(array(':mail_immessa' => $rrows['email'], ':accesso' => $access));
+											
+											$rowlast = $stmt_lastlog->fetch();
+
+											/* fomat last loging */
+
+											if (isset($rowlast['data']))
+												$disp_last = $rowlast['data'];
+											else
+												$disp_last = "No logged yet";
+											
+											/* links to edit and delete */
+											
+											$edit = '<button type="button" name="edit" value="Edit" id="' . $rrows['id'] . '" class="btn btn-info btn-sm edit_data"><i class="fas fa-pencil-alt"></i></button>';
+											
+											/* if user displayed is active user, do not show delete item option */
+											
+											if ($_SESSION['user'] == $rrows['id'])
+												$del = "";
+											else											
+												$del = '<a data-org="users" data-row-id="' . $rrows['id'] . '" data-name="' .  $disp_name . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_item ml-3"><i class="fas fa-trash-alt"></i></a>';
+										
+											$output .= '<tr>';
+												$output .= '<td>' . $disp_name . '</td><td style="text-align: left;"><a href="mailto:' . $rrows['email']  . '" style="color:#0056b3;">' . $rrows['email'] . '</a></td><td style="text-align: center;">' . $disp_level . '</td><td style="text-align: center;">' . $disp_last . '</td><td class="text-center">' . $edit . $del . '</td>';
+											$output .= '</tr>';
+
+										}
+										
+										if (isset($_GET['msgok'])) {
+											echo '<div class="alert alert-success" role="alert"><strong><i class="far fa-check-circle fa-lg"></i> Item deleted succesfully!</strong></div>';
+										}
+										
+										echo '<table id="table_list" class="table table-bordered table-hover">';
+											echo '<thead class="thead-dark">';
+												echo '<tr><th scope="col" class="text-center">Nombre de Usuario</th><th scope="col" class="text-center">Email</th><th scope="col" class="text-center">Nivel</th><th scope="col" class="text-center">Ultimo Login</th><th scope="col" class="text-center">Acción</th></tr>';
+											echo '</thead>';
+											echo '<tbody>';						
+												echo $output;							
+											echo '</tbody>';						
+										echo '</table>';
+											
+									}
+								
+								?>
+						
+							</div>
+							
+						</div>
+
+					</div>	
+					
+				</main>
+				
+			</div>
+			
+		</div>
 		
 		<!-- MODALS -->
 		
-		<!-- Add new contact modal -->
+		<!-- Add New User modal -->
 		
-		<div class="modal fade" id="newuser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal fade" id="new_item" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		
-			<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-dialog" role="document">
 			
 				<div class="modal-content">
 				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Agregar Usuario</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-user-plus mr-3"></i>Add New User</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -309,44 +199,21 @@
 					
 					<form id="form_adduser" method="post">	
 					
-						<div class="modal-body">	
+						<div class="modal-body bg-light">	
 						
+							<div id="errmsg"></div>
+
 							<div class="form-row">
 								<div class="col">
-									<label for="level" class="col-form-label">Nivel de Acceso:</label>
+									<label for="level" class="col-form-label">Access Level:</label>
 									<select class="custom-select mr-sm-2" id="level" name="level" required>
-										<option value="0">Colaborador</option>
+										<option value="0">Collaborator</option>
 										<option value="1">Webmaster</option>	
-										<option value="2">Administrador</option>	
+										<option value="2">Administrator</option>	
 									</select>
 								</div>
 							</div>
 
-							<div class="form-row">								
-								<div class="col">
-									<label for="first_name" class="col-form-label">Nombre:</label>
-									<input type="text" id="first_name" name="first_name" class="form-control" required>
-								</div>
-								<div class="col">
-									<label for="last_name" class="col-form-label">Apellido:</label>
-									<input type="text" id="last_name" name="last_name" class="form-control" required>
-								</div>
-							</div>	
-							
-							<div class="form-row">								
-								<div class="col">
-									<label for="username" class="col-form-label">Nombre de Usuario:</label>
-									<input type="text" id="username" name="username" class="form-control" required>
-								</div>
-							</div>	
-
-							<div class="form-row">
-								<div class="col">
-									<label for="password" class="col-form-label">Password:</label><small> Más de 6 caracteres</small>
-									<input type="text" class="form-control" id="password" name="password" required>
-								</div>
-							</div>
-							
 							<div class="form-row">								
 								<div class="col">
 									<label for="email" class="col-form-label">Email:</label>
@@ -354,9 +221,31 @@
 								</div>
 							</div>	
 
-							<div class="modal-footer">							
-								<button type="submit" class="btn btn-primary" id="register" name="register" value="register">Enviar Registro</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+							<div class="form-row">								
+								<div class="col-12 col-md-6">
+									<label for="first_name" class="col-form-label">First Name:</label>
+									<input type="text" id="first_name" name="first_name" class="form-control" required>
+								</div>
+								<div class="col">
+									<label for="last_name" class="col-form-label">Last Name:</label>
+									<input type="text" id="last_name" name="last_name" class="form-control" required>
+								</div>
+							</div>								
+							
+							<div class="form-row">
+								<div class="col-12 col-md-6">
+									<label for="password" class="col-form-label">Password:</label><small><em> (at least 8 characters)</em></small>
+									<input type="text" class="form-control" id="password" name="password" required>
+								</div>
+								<div class="col-12 col-md-6">
+									<label for="password" class="col-form-label">Confirm Password:</label>
+									<input type="text" class="form-control" id="confirm_password" name="confirm_password" required>
+								</div>
+							</div>
+
+							<div class="modal-footer border-0">							
+								<input type="submit" class="btn btn-sm btn-primary" id="register" name="register" value="Submit">
+								<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>						
 							</div>		
 
 						</div>	
@@ -369,16 +258,16 @@
 			
 		</div>
 		
-		<!-- Edit contact modal -->
+		<!-- Edit User modal -->
 		
-		<div class="modal fade" id="edituser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal fade" id="edit_item" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		
-			<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-dialog" role="document">
 			
 				<div class="modal-content">
 				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Usuario</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-user mr-3"></i>Edit User</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -386,55 +275,36 @@
 					
 					<form id="form_edituser" method="post">	
 					
-						<div class="modal-body">	
+						<div class="modal-body bg-light">	
 						
+							<div id="e_errmsg"></div>
+
 							<div class="form-row">
 								<div class="col">
-									<label for="elevel" class="col-form-label">Nivel de Acceso:</label>
+									<label for="elevel" class="col-form-label">Access Level:</label>
 									<select class="custom-select mr-sm-2" id="elevel" name="elevel" required>
-										<option value="0">Colaborador</option>
+										<option value="0">Collaborator</option>
 										<option value="1">Webmaster</option>	
-										<option value="2">Administrador</option>	
+										<option value="2">Administrator</option>	
 									</select>
 								</div>
 							</div>
 
 							<div class="form-row">								
-								<div class="col">
-									<label for="efirst_name" class="col-form-label">Nombre:</label>
+								<div class="col-12 col-md-6">
+									<label for="efirst_name" class="col-form-label">First Name:</label>
 									<input type="text" id="efirst_name" name="efirst_name" class="form-control" required>
 								</div>
 								<div class="col">
-									<label for="elast_name" class="col-form-label">Apellido:</label>
+									<label for="elast_name" class="col-form-label">Last Name:</label>
 									<input type="text" id="elast_name" name="elast_name" class="form-control" required>
 								</div>
-							</div>	
-							
-							<div class="form-row">								
-								<div class="col">
-									<label for="eusername" class="col-form-label">Nombre de Usuario:</label>
-									<input type="text" id="eusername" name="eusername" class="form-control" required>
-								</div>
-							</div>	
+							</div>								
 
-							<div class="form-row">
-								<div class="col">
-									<label for="epassword" class="col-form-label">Password:</label><small> Más de 6 caracteres</small>
-									<input type="text" class="form-control" id="epassword" name="epassword" required>
-								</div>
-							</div>
-							
-							<div class="form-row">								
-								<div class="col">
-									<label for="eemail" class="col-form-label">Email:</label>
-									<input type="email" id="eemail" name="eemail" class="form-control" required>
-								</div>
-							</div>	
-
-							<div class="modal-footer">
-								<input type="hidden" id="ememberID" name="ememberID" value="">
-								<button type="submit" class="btn btn-primary" id="edit" name="edit" value="register">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+							<div class="modal-footer border-0">	
+								<input type="hidden" id="eid" name="eid">
+								<input type="submit" class="btn btn-sm btn-primary" id="edit" name="edit" value="Submit">
+								<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>						
 							</div>		
 
 						</div>	
@@ -447,42 +317,21 @@
 			
 		</div>
 
-		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-		
-		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+		<!-- js -->
 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
+		
+		<!-- custom js -->
+		
+		<script src="js/easion.js"></script>
+		
 		<!-- datatables -->		
 		
 		<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-		<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>		
-
-		<!-- Optional JavaScript -->
-		
-		<!-- Menu Toggle Script -->
-		
-		<script>
-			$('#body-row .collapse').collapse('hide');
-			$('#collapse-icon').addClass('fa-angle-double-left');
-			$('[data-toggle=sidebar-colapse]').click(function() {
-				SidebarCollapse();
-			});
-			function SidebarCollapse () {
-				$('.menu-collapsed').toggleClass('d-none');
-				$('.sidebar-submenu').toggleClass('d-none');
-				$('.submenu-icon').toggleClass('d-none');
-				$('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
-				var SeparatorTitle = $('.sidebar-separator-title');
-				if ( SeparatorTitle.hasClass('d-flex') ) {
-					SeparatorTitle.removeClass('d-flex');
-				} else {
-					SeparatorTitle.addClass('d-flex');
-				}				
-				$('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
-			}					
-		</script>
+		<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>	
 
 		<script>
 			$(document).ready(function() {
@@ -496,32 +345,138 @@
 							sLengthMenu: "Mostrar _MENU_"},
 			});
 		</script>
-
-		<!-- edit user -->
+		
+		<!-- check matches -->
+		
+		<script>
+			$(document).ready(function(){ 			
+				var password = document.getElementsByName("password")[0];
+				var confirm_password = document.getElementsByName("confirm_password")[0];
+				function validatePassword(){
+					if(password.value != confirm_password.value) {
+						confirm_password.setCustomValidity("Passwords Don't Match");
+					} else {
+						confirm_password.setCustomValidity('');
+					}
+				}
+				password.onchange = validatePassword;
+				confirm_password.onkeyup = validatePassword;				
+			}); 		
+		</script>
+		
+		<!-- send form_adduser form -->
+		
+		<script>		
+			$(document).ready(function(){
+				$("form[id='form_adduser']").submit(function(){
+					$.ajax({
+						url : 'dir_users_add.php',
+						type : 'POST',
+						data : $(this).serialize(),
+						dataType:"json",  
+						success : function(data){	
+							if (data.msgstat === 1) {
+								$("#errmsg").html(data.msg);														
+							} else {
+								window.location='dir_users.php' 								
+							}	
+						}
+					});
+					return false;
+				});
+			});			
+		</script>
+		
+		<!-- populate form_edituser form -->
 		
 		<script>		
 			$(document).ready(function(){  
 				$(document).on('click', '.edit_data', function(){  
-					var memberid = $(this).attr("id");  
+					var id = $(this).attr("id");  
 					$.ajax({  
 						url:"fetch_user.php",  
 						method:"POST",  
-						data:{memberID:memberid},  
+						data:{id:id},  
 						dataType:"json",  
-						success:function(data){  
-							$('#elevel').val(data.level);  
+						success:function(data){ 
+							$('#eid').val(data.id); 
+							$('#elevel').val(data.level); 
 							$('#efirst_name').val(data.first_name);  
 							$('#elast_name').val(data.last_name);  
-							$('#eusername').val(data.username);  
-							$('#eemail').val(data.email);  
-							$('#ememberID').val(data.memberID);  							
-							$('#edituser').modal('show');  
+							$('#edit_item').modal('show');  
 						}  
 					});  
 				});  		
 			});  
 		 </script>
+		 
+		<!-- send form_edituser form -->
+		
+		<script>		
+			$(document).ready(function(){
+				$("form[id='form_edituser']").submit(function(){
+					$.ajax({
+						url : 'dir_users_edit.php',
+						type : 'POST',
+						data : $(this).serialize(),
+						dataType:"json",  
+						success : function(data){	
+							if (data.msgstat === 1) {
+								$("#e_errmsg").html(data.msg);														
+							} else {
+								window.location='dir_users.php' 								
+							}	
+						}
+					});
+					return false;
+				});
+			});			
+		</script>
+		
+		<!-- delete items -->
 
-	</body>
-	
+		<script>
+			$(document).ready(function(){
+				$('.delete_item').click(function(e){
+					e.preventDefault();
+					var rowid = $(this).attr('data-row-id');
+					var roworg = $(this).attr('data-org');
+					var rowname = $(this).attr('data-name');
+					var dataString = 'rowid=' + rowid + '&roworg=' + roworg;					
+					bootbox.dialog({
+						message: "<div class='alert alert-danger text-center' role='alert'>Are you sure you want to eliminate this item?<strong><br>" + rowname + "<br></strong>All information related will be eliminated too!</strong></div>",
+						title: "<i class='fas fa-trash-alt text-danger'></i> Delete Item!",
+						buttons: {
+							success: {
+								label: "No",
+								className: "btn-success btn-sm",
+								callback: function() {
+									$('.bootbox').modal('hide');
+								}
+							},
+							danger: {
+								label: "Delete",
+								className: "btn-danger btn-sm",
+								callback: function() {
+									$.ajax({
+										type: 'POST',
+										url: 'delete_records.php',
+										data: dataString,
+									})
+									.done(function(response){
+										window.location.replace("dir_users?msgok=1");
+									})
+									.fail(function(){
+										bootbox.alert('Error. The deleted process failed! Check with the system administrator.');
+									})
+								}
+							}
+						}
+					});
+				});
+			});
+		</script>
+		
+	</body>	
+
 </html>

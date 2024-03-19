@@ -1,16 +1,19 @@
 <?php
 
-	/* include config */
+	/* dir_contacts.php */
+
+	/* db connection and session setup */
 	
-	require_once('includes/config.php');
+	include("check.php"); 
 	
-	/* if not logged in redirect to login page */
+	/* if not logged in redirects to login page */
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
-	
+	if (!($_SESSION['user'])) { header('Location: login'); }	
+
 	/* receive vars */
-	
-	$contact_id = $_REQUEST['contact_id'];
+
+	if (isset($_REQUEST['contact_id']))
+		$contact_id = $_REQUEST['contact_id'];
 	
 	/* retrieve info from table */
 	
@@ -18,18 +21,18 @@
 	$stmt->execute(array(':contact_id' => $contact_id));
 	
 	$rrows = $stmt->fetch(PDO::FETCH_ASSOC);
-	
-	/* general vars */
-	
-	$ctc_type = $rrows['contact_classif2'];	
-	
+
 	/* define page title */
 	
 	$title = $rrows['contact_name'] . " " . $rrows['contact_lastname'];
 	
-	/* save new contact */
+	/* general vars */
+	
+	$ctc_type = $rrows['contact_classif2'];		
+	
+	/* save new subcontact */
 
-	if($_POST['addsubcontact'] == "save") {
+	if(isset($_POST['addsubcontact']) AND  $_POST['addsubcontact'] == "save") {
 		
 		$stmt = $db->prepare('INSERT INTO dir_subcontacts (subcontact_contact, subcontact_name, subcontact_lastname, subcontact_alias, subcontact_phone, subcontact_email, subcontact_dob, subcontact_nationality, subcontact_dni, subcontact_dni_exp, subcontact_pass_num, subcontact_pass_exp, subcontact_notes, subcontact_newsletter1, subcontact_newsletter2) VALUES (:subcontact_contact, :subcontact_name, :subcontact_lastname, :subcontact_alias, :subcontact_phone, :subcontact_email, :subcontact_dob, :subcontact_nationality, :subcontact_dni, :subcontact_dni_exp, :subcontact_pass_num, :subcontact_pass_exp, :subcontact_notes, :subcontact_newsletter1, :subcontact_newsletter2)');
 		
@@ -66,114 +69,105 @@
 		
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title><?php echo $title; ?></title>
 		
 		<!-- favicon -->
 		
-		<link rel="apple-touch-icon" sizes="180x180" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="images/logos/favicon.png">	
 
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  	
-		
-		<!-- Bootstrap CSS -->
-		
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-		<script src="https://kit.fontawesome.com/379421e620.js" crossorigin="anonymous"></script>
 
-		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,400i|Playfair+Display&display=swap" rel="stylesheet">
+		<!-- fonts -->
+		
+		<link href="https://fonts.googleapis.com/css?family=Nunito:400,600|Open+Sans:400,600,700" rel="stylesheet">		
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
 
-		<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<!-- js -->
 		
-		<!-- custom CSS -->
-	
-		<link href="css/styles.css" rel="stylesheet">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
 		
-		<!-- datepicker -->
+		<!-- Custom CSS -->		
 		
-		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/i18n/jquery-ui-i18n.min.js"></script>
-		
+		<link rel="stylesheet" href="css/easion.css">	
+
 		<!-- title -->
-
+		
 		<title><?php echo $title; ?></title>
 		
 	</head>
 	
 	<body>
 	
-		<!-- top navbar -->
-		
-		<?php include ("navbar.php"); ?>	
-		
-		<!-- sidebar and main content -->
-		
-		<div class="row" id="body-row">			
+		<div class="dash">
 			
-			<?php include ("navbar_side.php"); ?>			
+			<!-- navbar -->
 
-			<div class="col mb-5">
-				 
-				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">		
-					<nav aria-label="breadcrumb">
-						<ol class="breadcrumb">								
-							<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
-							<li class="breadcrumb-item"><a href="dir_contacts">Directorio de contactos</a></li>
-							<li class="breadcrumb-item active" aria-current="page"><?php echo $title; ?></li>
-						</ol>
-					</nav>							
-				</div>
-					
-				<div class="row">
-				
-					<div class="col-lg-6 col-md-12">							
-				
-						<div id="general_info">								
-						
-							<?php include 'dir_contacts_general_info_disp.php'; ?>				
-						
-						</div>													
+			<?php include ("navbar.php"); ?>
 
-					</div>
-					
-					<div class="col col-lg-6 col-md-12">							
-					
-						<div id="other_info">
-						
-							<?php include 'dir_contacts_specific_disp.php'; ?>				
-						
-						</div>		
-					
-					</div>
-					
-				</div>	
-
-				<?php if ($_SESSION['level'] > 1) { ?>				
-
-					<div class="row">
-					
-						<div class="col col-lg-6 col-md-12">	
-						
-							<!-- folder documents -->
-							
-							<div id="cloud_docs">								
-							
-								<?php include 'dir_contacts_cloud.php'; ?>				
-							
-							</div>	
-					
-						</div>
-						
-					</div>
-					
-				<?php } ?>		
-				
-			</div>	
+			<!-- center body -->
 			
-			<!-- footer -->	
-					
-			<?php include ("footer.php"); ?>	
+			<div class="dash-app">
+			
+				<!-- header bar -->
 				
+				<?php include ("header_bar.php"); ?>
+				
+				<!-- breadcrumb -->
+				
+				<nav class="bg-light" aria-label="breadcrumb">
+					<ol class="breadcrumb">								
+						<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
+						<li class="breadcrumb-item"><a href="dir_contacts">Directorio de Contactos</a></li>
+						<li class="breadcrumb-item active" aria-current="page"><?php echo $title; ?></li>						
+					</ol>
+				</nav>					
+
+				<!-- main content -->				
+				
+				<main class="dash-content">
+				
+					<div class="container-fluid">
+
+						<div class="row">
+						
+							<div class="col-lg-6 col-md-12">							
+						
+								<div id="general_info">								
+								
+									<?php include 'dir_contacts_general_info_disp.php'; ?>				
+								
+								</div>		
+
+								<?php if ($_SESSION['level'] > 1) { ?>		
+
+									<!-- folder documents -->
+										
+									<div id="cloud_docs">								
+										
+										<?php include 'dir_contacts_cloud.php'; ?>				
+									
+									</div>
+
+								<?php } ?>
+
+							</div>
+							
+							<div class="col col-lg-6 col-md-12">							
+							
+								<div id="other_info">
+								
+									<?php include 'dir_contacts_specific_disp.php'; ?>				
+								
+								</div>		
+							
+							</div>
+							
+						</div>	
+
+					</div>		
+
+				</main>
+				
+			</div>
+			
 		</div>		
 
 		<!-- MODALS -->
@@ -187,7 +181,7 @@
 				<div class="modal-content">	
 				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Contacto</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Contacto</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -195,7 +189,7 @@
 					
 					<form id="form_editcontact" method="post" autocomplete="off">	
 
-						<div class="modal-body">	
+						<div class="modal-body bg-light">	
 						
 							<div class="form-row">
 								<div class="col">
@@ -539,7 +533,7 @@
 								<div class="form-row">								
 									<div class="col">
 										<label for="contact_dob" class="col-form-label">Fecha de Nacimiento:</label>
-										<input type="text" id="contact_dob" name="contact_dob" class="form-control datepicker">
+										<input type="date" id="contact_dob" name="contact_dob" class="form-control">
 									</div>
 									<div class="col">
 										<label for="contact_nationality" class="col-form-label">Nacionalidad:</label>
@@ -804,7 +798,7 @@
 									</div>
 									<div class="col">
 										<label for="contact_pass_exp" class="col-form-label">Pasaporte Fecha Expiración:</label>
-										<input type="text" id="contact_pass_exp" name="contact_pass_exp" class="form-control datepicker">
+										<input type="date" id="contact_pass_exp" name="contact_pass_exp" class="form-control">
 									</div>								
 								</div>	
 								
@@ -815,7 +809,7 @@
 									</div>
 									<div class="col">
 										<label for="contact_dni_exp" class="col-form-label">DNI Fecha Expiración:</label>
-										<input type="text" id="contact_dni_exp" name="contact_dni_exp" class="form-control datepicker">
+										<input type="date" id="contact_dni_exp" name="contact_dni_exp" class="form-control">
 									</div>								
 								</div>
 							
@@ -838,8 +832,8 @@
 
 							<div class="modal-footer">							
 								<input type="hidden" id="contact_id" name="contact_id" value="<?php echo $contact_id; ?>">
-								<button type="submit" class="btn btn-primary" id="addcontact" name="addcontact" value="save">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="addcontact" name="addcontact" value="save">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
 							
 						</div>	
@@ -861,7 +855,7 @@
 				<div class="modal-content">
 				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Agregar Subcontacto</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-address-card mr-3"></i>Agregar Subcontacto</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -906,7 +900,7 @@
 							<div class="form-row">								
 								<div class="col">
 									<label for="subcontact_dob" class="col-form-label">Fecha de Nacimiento:</label>
-									<input type="text" id="datepicker" name="subcontact_dob" class="form-control datepicker">
+									<input type="date" id="datepicker" name="subcontact_dob" class="form-control">
 								</div>
 								<div class="col">
 									<label for="subcontact_nationality" class="col-form-label">Nacionalidad:</label>
@@ -1171,7 +1165,7 @@
 								</div>
 								<div class="col">
 									<label for="subcontact_pass_exp" class="col-form-label">Pasaporte Fecha Expiración:</label>
-									<input type="text" id="subcontact_pass_exp" name="subcontact_pass_exp" class="form-control datepicker">
+									<input type="date" id="subcontact_pass_exp" name="subcontact_pass_exp" class="form-control">
 								</div>								
 							</div>	
 							
@@ -1182,7 +1176,7 @@
 								</div>
 								<div class="col">
 									<label for="subcontact_dni_exp" class="col-form-label">DNI Fecha Expiración:</label>
-									<input type="text" id="subcontact_dni_exp" name="subcontact_dni_exp" class="form-control datepicker">
+									<input type="date" id="subcontact_dni_exp" name="subcontact_dni_exp" class="form-control">
 								</div>								
 							</div>	
 							
@@ -1210,8 +1204,8 @@
 							
 							<div class="modal-footer">	
 								<input type="hidden" id="subcontact_contact" name="subcontact_contact" value="<?php echo $contact_id; ?>">
-								<button type="submit" class="btn btn-primary" id="addsubcontact" name="addsubcontact" value="save">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="addsubcontact" name="addsubcontact" value="save">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>		
 
 						</div>	
@@ -1233,7 +1227,7 @@
 				<div class="modal-content">
 				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Subcontacto</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Subcontacto</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -1278,7 +1272,7 @@
 							<div class="form-row">								
 								<div class="col">
 									<label for="xsubcontact_dob" class="col-form-label">Fecha de Nacimiento:</label>
-									<input type="text" id="xsubcontact_dob" name="xsubcontact_dob" class="form-control datepicker">
+									<input type="date" id="xsubcontact_dob" name="xsubcontact_dob" class="form-control">
 								</div>
 								<div class="col">
 									<label for="xsubcontact_nationality" class="col-form-label">Nacionalidad:</label>
@@ -1543,7 +1537,7 @@
 								</div>
 								<div class="col">
 									<label for="xsubcontact_pass_exp" class="col-form-label">Pasaporte Fecha Expiración:</label>
-									<input type="text" id="xsubcontact_pass_exp" name="xsubcontact_pass_exp" class="form-control datepicker">
+									<input type="date" id="xsubcontact_pass_exp" name="xsubcontact_pass_exp" class="form-control ">
 								</div>								
 							</div>	
 							
@@ -1554,7 +1548,7 @@
 								</div>
 								<div class="col">
 									<label for="xsubcontact_dni_exp" class="col-form-label">DNI Fecha Expiración:</label>
-									<input type="text" id="xsubcontact_dni_exp" name="xsubcontact_dni_exp" class="form-control datepicker">
+									<input type="date" id="xsubcontact_dni_exp" name="xsubcontact_dni_exp" class="form-control">
 								</div>								
 							</div>	
 							
@@ -1583,8 +1577,8 @@
 							<div class="modal-footer">	
 								<input type="hidden" id="xsubcontact_id" name="xsubcontact_id" value="">
 								<input type="hidden" id="contact_id4" name="contact_id4" value="<?php echo $contact_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editsubcontact" name="editsubcontact" value="save">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editsubcontact" name="editsubcontact" value="save">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>		
 
 						</div>	
@@ -1603,7 +1597,7 @@
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Acceso</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Acceso</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -1630,8 +1624,8 @@
 							</div>								
 							<div class="modal-footer">							
 								<input type="hidden" id="contact_id2" name="contact_id2" value="<?php echo $contact_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editar4" name="editar4" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editar4" name="editar4" value="edit">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
 						</div>								
 					</form>	
@@ -1645,7 +1639,7 @@
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Editar Notas</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-pencil-alt mr-3"></i>Editar Notas</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -1659,8 +1653,8 @@
 							</div>						
 							<div class="modal-footer">		
 								<input type="hidden" id="contact_id3" name="contact_id3" value="<?php echo $contact_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editar5" name="editar5" value="edit">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editar5" name="editar5" value="edit">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
 						</div>								
 					</form>	
@@ -1674,7 +1668,7 @@
 			<div class="modal-dialog" role="document">			
 				<div class="modal-content">				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Crear Folder Nuevo</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-folder-plus mr-3"></i>Crear Folder Nuevo</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -1689,8 +1683,8 @@
 							</div>						
 							<div class="modal-footer">		
 								<input type="hidden" id="fold_contact" name="fold_contact" value="<?php echo $contact_id; ?>">
-								<button type="submit" class="btn btn-primary" id="editar5" name="editar5" value="edit">Crear Folder</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="editar5" name="editar5" value="edit">Crear Folder</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>
 						</div>								
 					</form>	
@@ -1698,53 +1692,16 @@
 			</div>			
 		</div>
 		
-		<!-- jQuery, Popper.js, Bootstrap JS -->
-
-		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+		<!-- js -->
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
 		
-		<!-- Optional JavaScript -->	
+		<!-- custom js -->
 		
-		<!-- Menu Toggle Script -->
-		
-		<script>
-			$('#body-row .collapse').collapse('hide');
-			$('#collapse-icon').addClass('fa-angle-double-left');
-			$('[data-toggle=sidebar-colapse]').click(function() {
-				SidebarCollapse();
-			});
-			function SidebarCollapse () {
-				$('.menu-collapsed').toggleClass('d-none');
-				$('.sidebar-submenu').toggleClass('d-none');
-				$('.submenu-icon').toggleClass('d-none');
-				$('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
-				var SeparatorTitle = $('.sidebar-separator-title');
-				if ( SeparatorTitle.hasClass('d-flex') ) {
-					SeparatorTitle.removeClass('d-flex');
-				} else {
-					SeparatorTitle.addClass('d-flex');
-				}				
-				$('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
-			}					
-		</script>
-
-		<!-- datepicker -->
-	
-		<script>
-			$(document).ready(function() {   
-				var userLang = navigator.language || navigator.userLanguage; 		  
-				var options = $.extend({}, // empty object    
-					$.datepicker.regional["es"], {  
-						dateFormat: "dd/mm/yy" ,
-						changeMonth: true,
-						changeYear: true,
-						yearRange: '1910:2050',
-					} // your custom options    
-				);  		  
-				$(".datepicker").datepicker(options);  
-			}); 									
-		</script>
+		<script src="js/easion.js"></script>
 		
 		<!-- Edit General Contact Info -->
 		
@@ -1993,7 +1950,50 @@
 				return false;
 			  });
 			});		
-		</script>		
+		</script>	
+
+		<!-- delete contact function -->
+
+		<script>
+			$(document).ready(function(){
+				$('.delete_contact').click(function(e){
+					e.preventDefault();
+					var rowid = $(this).attr('data-row-id');
+					var roworg = $(this).attr('data-org');
+					var dataString = 'rowid=' + rowid + '&roworg=' + roworg;					
+					bootbox.dialog({
+						message: "<div class='alert alert-danger text-center' role='alert'><strong>Estas seguro que quieres eliminar este contacto?<br />Toda la información asociada a este contacto también se eliminará.</strong></div>",
+						title: "<i class='fas fa-trash-alt text-danger'></i> Eliminar Contacto!",
+						buttons: {
+							success: {
+								label: "No",
+								className: "btn-success btn-sm",
+								callback: function() {
+									$('.bootbox').modal('hide');
+								}
+							},
+							danger: {
+								label: "Eliminar",
+								className: "btn-danger btn-sm",
+								callback: function() {
+									$.ajax({
+										type: 'POST',
+										url: 'delete_records.php',
+										data: dataString,
+									})
+									.done(function(response){
+										window.location.replace("dir_contacts");
+									})
+									.fail(function(){
+										bootbox.alert('Error. No se pudo eliminar contacto');
+									})
+								}
+							}
+						}
+					});
+				});
+			});
+		</script>	
 
 	</body>
 	

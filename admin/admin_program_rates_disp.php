@@ -49,24 +49,24 @@
 			if ($rrowi['program_rates_feature'] == 1)
 				$disp_featured = '<span class="text-success">Destacado</span>';
 			else
-				$disp_featured = "";
+				$disp_featured = "-";
 			
 			/* links to edit and delete */
 			
-			$edit = '<td class="text-center"><input type="button" name="edit" value="Editar" id="' . $rrowi['program_rates_id'] . '" class="btn btn-info btn-sm edit_data" /></td>';
-			$delete = '<td class="text-center"><a data-org="rate" data-row-id="' . $rrowi['program_rates_id'] . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_data">Eliminar</a></td>';		
+			$edit = '<button type="button" name="edit" value="Editar" id="' . $rrowi['program_rates_id'] . '" class="btn btn-info btn-sm edit_data mr-3"><i class="fas fa-pencil-alt"></i></button>';
+			$delete = '<a data-org="rate" data-row-id="' . $rrowi['program_rates_id'] . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_data"><i class="fas fa-trash-alt"></i></a>';		
 
 			$output .= '<tr>';
-				$output .= '<td style="text-align: left;"><strong>' . $disp_catego  . '</strong></td><td class="text-center">' . $disp_rate . '</td><td class="text-center">' . $disp_featured . '</td>' . $edit . $delete;
+				$output .= '<td style="text-align: left;"><strong>' . $disp_catego . '</strong><br><span class="text-secondary">' . $rrowi['program_rates_note'] . '</span></td><td class="text-center"><strong>' . $disp_rate . '</strong></td><td class="text-center">' . $disp_featured . '</td><td style="text-align:center; width:120px;">' . $edit . $delete . '</td>';
 			$output .= '</tr>';
 
 		}
 		
-		echo '<p class="text-right">Total : ' . $cont1 . '</p>';
+		echo '<p class="text-right mr-3">Total : ' . $cont1 . '</p>';
 		
 		echo '<table class="table table-bordered table-hover" >';
 			echo '<thead class="thead-dark">';
-				echo '<tr><th scope="col">Nombre Tarifa</th><th scope="col" class="text-center">Importe</th><th scope="col" class="text-center">Destacado</th><th scope="col" class="text-center">Editar</th><th scope="col" class="text-center">Borrar</th></tr>';
+				echo '<tr><th scope="col">Nombre Tarifa</th><th scope="col" class="text-center">Importe</th><th scope="col" class="text-center">Destacado</th><th scope="col" class="text-center">Acción</th></tr>';
 			echo '</thead>';
 			echo '<tbody>';						
 				echo $output;							

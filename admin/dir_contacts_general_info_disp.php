@@ -2,14 +2,20 @@
 
 	/* Display Contact General Info */
 	
-	$del = '<a data-org="contact" data-row-id="' . $rrows['contact_id'] . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_contact float-right ml-3">Eliminar</a>';
+	$del = '<a data-org="contact" data-row-id="' . $rrows['contact_id'] . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_contact float-right ml-3" title="Delete Contact"><i class="fas fa-trash-alt"></i></a>';
+	$edit = '<button type="button" name="edit0" id="edit0" value="Edit" class="btn btn-info btn-sm edit_data0 float-right"><i class="fas fa-pencil-alt"></i></button>';
 
 ?>
 
-<h4 class="mb-4">Contacto Principal</h4>
+<h5><strong>Contacto Principal</strong></h5>
 
-<div class="card">
-	<h5 class="card-header"><strong><?php echo $rrows['contact_name'] . " "  . $rrows['contact_lastname']; ?></strong><?php echo $del; ?><input type="button" name="edit0" id="edit0" value="Editar" class="btn btn-info btn-sm edit_data0 float-right"></h5>
+<div class="card easion-card h-100">
+
+	<div class="card-header d-flex justify-content-between align-items-center">
+		<div class="text-warning font-weight-bold"><?php echo $rrows['contact_name'] . " "  . $rrows['contact_lastname']; ?></div>
+		<div><?php echo $del . $edit; ?></div>
+	</div>
+
 	<div class="card-body">	
 		<div class="row">
 			<div class="col">
@@ -102,8 +108,8 @@
 <!-- display notes of contact -->
 
 <div id="card_notes">
-	<div class="card mt-3">
-		<div class="card-header">Notas<input type="button" name="edit_nt" id="edit_nt" value="Editar" class="btn btn-info btn-sm edit_notes float-right"></div>
+	<div class="card easion-card h-100">
+		<div class="card-header d-flex justify-content-between align-items-center"><strong>Notas</strong><button type="button" name="edit_nt" id="edit_nt" value="Editar" class="btn btn-info btn-sm edit_notes float-right"><i class="fas fa-pencil-alt"></i></button></div>
 		<div class="card-body">	
 			<div class="row">
 				<div class="col">
@@ -113,46 +119,3 @@
 		</div>
 	</div>
 </div>
-
-<!-- delete contact function -->
-
-<script>
-	$(document).ready(function(){
-		$('.delete_contact').click(function(e){
-			e.preventDefault();
-			var rowid = $(this).attr('data-row-id');
-			var roworg = $(this).attr('data-org');
-			var dataString = 'rowid=' + rowid + '&roworg=' + roworg;					
-			bootbox.dialog({
-				message: "<div class='alert alert-danger' role='alert'>Estas seguro que quieres eliminar este contacto?<br />Toda la información asociada a este contacto también se eliminará.</div>",
-				title: "<i class='fas fa-trash-alt'></i> Eliminar Contacto!",
-				buttons: {
-					success: {
-						label: "No",
-						className: "btn-success",
-						callback: function() {
-							$('.bootbox').modal('hide');
-						}
-					},
-					danger: {
-						label: "Eliminar",
-						className: "btn-danger",
-						callback: function() {
-							$.ajax({
-								type: 'POST',
-								url: 'delete_records.php',
-								data: dataString,
-							})
-							.done(function(response){
-								window.location.replace("dir_contacts");
-							})
-							.fail(function(){
-								bootbox.alert('Error. No se pudo eliminar contacto');
-							})
-						}
-					}
-				}
-			});
-		});
-	});
-</script>

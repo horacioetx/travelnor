@@ -33,20 +33,19 @@
 			
 			/* links to edit and delete */
 			
-			$edit = '<td class="text-center"><input type="button" name="edit" value="Editar" id="' . $rrowi['prog_inc_id'] . '" class="btn btn-info btn-sm edit_data" /></td>';
-			$delete = '<td class="text-center"><a data-org="included" data-row-id="' . $rrowi['prog_inc_id'] . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_data">Eliminar</a></td>';	
+			$edit = '<button type="button" name="edit" value="Editar" id="' . $rrowi['prog_inc_id'] . '" class="btn btn-info btn-sm edit_data mr-3"><i class="fas fa-pencil-alt"></i></button>';
+			$delete = '<a data-org="included" data-row-id="' . $rrowi['prog_inc_id'] . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_data"><i class="fas fa-trash-alt"></i></a>';	
 			
 			$output .= '<tr>';
-				$output .= '<td>' . $rrowi['prog_inc_descrip']  . '</td><td class="text-center">' . $disp_special . '</td>' . $edit . $delete;
-			$output .= '</tr>';
+				$output .= '<td>' . $rrowi['prog_inc_descrip']  . '</td><td class="text-center">' . $disp_special . '</td><td style="text-align:center; width:120px;">' . $edit . $delete . '</td>';
 
 		}
 		
-		echo '<p class="text-right">Total : ' . $cont1 . '</p>';
+		echo '<p class="text-right mr-3">Total : ' . $cont1 . '</p>';
 		
 		echo '<table class="table table-bordered table-hover" >';
 			echo '<thead class="thead-dark">';
-				echo '<tr><th scope="col">Descripción</th><th scope="col" class="text-center">Tipo</th><th scope="col" class="text-center">Editar</th><th scope="col" class="text-center">Borrar</th></tr>';
+				echo '<tr><th scope="col">Descripción</th><th scope="col" class="text-center">Tipo</th><th scope="col" class="text-center">Acción</th></tr>';
 			echo '</thead>';
 			echo '<tbody>';						
 				echo $output;							

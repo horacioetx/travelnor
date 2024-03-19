@@ -1,12 +1,12 @@
 <?php
 
-	/* include config */
+	/* db connection and session setup */
 	
-	require_once('includes/config.php');
+	include("check.php"); 
 	
-	/* if not logged in redirect to login page */
+	/* if not logged in redirects to login page */
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
+	if (!($_SESSION['user'])) { header('Location: login'); }	
 	
 	/* receive vars */	
 	
@@ -32,14 +32,14 @@
 	
 	$rrows = $stmt->fetch(PDO::FETCH_ASSOC);
 	
-	/* format some vars */
-	
 	/* display results */
-	
-	echo '<h4 class="mb-4">Credenciales de Acceso</h5>';
-	
-	echo '<div class="card">';
-		echo '<div class="card-header">Accesos<input type="button" name="edit1" id="edit1" value="Editar" class="btn btn-info btn-sm edit_data1 float-right"></div>';
+
+	echo '<h5 class mb-3><strong>Credenciales de Acceso</strong></h5>';
+
+	echo '<div class="card easion-card h-100">';
+
+		echo '<div class="card-header d-flex justify-content-between align-items-center">Accesos<button type="button" name="edit1" id="edit1" value="Editar" class="btn btn-info btn-sm edit_data1 float-right"><i class="fas fa-pencil-alt"></i></button></div>';
+		
 		echo '<div class="card-body">';
 			echo '<div class="row">';
 				echo '<div class="col">';
@@ -49,6 +49,7 @@
 				echo '</div>';
 			echo '</div>';
 		echo '</div>';
+
 	echo '</div>';
 	
 ?>

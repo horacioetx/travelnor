@@ -1,51 +1,18 @@
 <?php
 
-	//include config
+	/* dir_contacts.php */
+
+	/* db connection and session setup */
 	
-	require_once('includes/config.php');
+	include("check.php"); 
 	
-	// if not logged in redirect to login page
+	/* if not logged in redirects to login page */
 	
-	if(!$user->is_logged_in()){ header('Location: login.php'); }
+	if (!($_SESSION['user'])) { header('Location: login'); }
 	
-	//define page title
+	/* define page title */
 	
 	$title = "Directorio de Contactos";
-	
-	/* save new contact */
-
-	if($_POST['addcontact'] == "save") {
-		
-		$stmt = $db->prepare('INSERT INTO dir_contacts (contact_name, contact_lastname, contact_alias, contact_classif0, contact_classif1, contact_classif2, contact_address1, contact_address2, contact_city, contact_pc, contact_country, contact_phone, contact_fax, contact_email, contact_dob, contact_nationality, contact_dni, contact_dni_exp, contact_pass_num, contact_pass_exp, contact_newsletter1, contact_newsletter2) VALUES (:contact_name, :contact_lastname, :contact_alias, :contact_classif0, :contact_classif1, :contact_classif2, :contact_address1, :contact_address2, :contact_city, :contact_pc, :contact_country, :contact_phone, :contact_fax, :contact_email, :contact_dob, :contact_nationality, :contact_dni, :contact_dni_exp, :contact_pass_num, :contact_pass_exp, :contact_newsletter1, :contact_newsletter2)');
-		
-		$stmt->bindParam(':contact_name', $_POST['contact_name']);
-		$stmt->bindParam(':contact_lastname', $_POST['contact_lastname']);
-		$stmt->bindParam(':contact_alias', $_POST['contact_alias']);
-		$stmt->bindParam(':contact_classif0', $_POST['contact_classif0']);
-		$stmt->bindParam(':contact_classif1', $_POST['contact_classif1']);
-		$stmt->bindParam(':contact_classif2', $_POST['contact_classif2']);
-		$stmt->bindParam(':contact_address1', $_POST['contact_address1']);
-		$stmt->bindParam(':contact_address2', $_POST['contact_address2']);
-		$stmt->bindParam(':contact_city', $_POST['contact_city']);	
-		$stmt->bindParam(':contact_pc', $_POST['contact_pc']);	
-		$stmt->bindParam(':contact_country', $_POST['contact_country']);			
-		$stmt->bindParam(':contact_phone', $_POST['contact_phone']);
-		$stmt->bindParam(':contact_fax', $_POST['contact_fax']);
-		$stmt->bindParam(':contact_email', $_POST['contact_email']);		
-		$stmt->bindParam(':contact_dob', $_POST['contact_dob']);
-		$stmt->bindParam(':contact_nationality', $_POST['contact_nationality']);		
-		$stmt->bindParam(':contact_dni', $_POST['contact_dni']);
-		$stmt->bindParam(':contact_dni_exp', $_POST['contact_dni_exp']);
-		$stmt->bindParam(':contact_pass_num', $_POST['contact_pass_num']);
-		$stmt->bindParam(':contact_pass_exp', $_POST['contact_pass_exp']);		
-		$stmt->bindParam(':contact_newsletter1', $_POST['contact_newsletter1']);
-		$stmt->bindParam(':contact_newsletter2', $_POST['contact_newsletter2']);		
-	
-		$stmt->execute();							
-
-		header("Location: dir_contacts?okmsg=Contacto Agregado!");		
-		
-	}
 	
 ?>
 
@@ -58,147 +25,153 @@
 		
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title><?php echo $title; ?></title>
 		
 		<!-- favicon -->
 		
-		<link rel="apple-touch-icon" sizes="180x180" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="32x32" href="images/logos/favicon.png">
-		<link rel="icon" type="image/png" sizes="16x16" href="images/logos/favicon.png">	
 
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  		
-		
-		<!-- Bootstrap and misc vendor CSS -->
-		
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-		<script src="https://kit.fontawesome.com/379421e620.js" crossorigin="anonymous"></script>
 
-		<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,400i|Playfair+Display&display=swap" rel="stylesheet">		
-
-		<!-- custom CSS -->
+		<!-- fonts -->
 		
-		<link href="css/styles.css" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css?family=Nunito:400,600|Open+Sans:400,600,700" rel="stylesheet">		
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+
+		<!-- Custom CSS -->
+		
+		<link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">		
+		<link rel="stylesheet" href="css/easion.css">	
 		
 		<!-- title -->
-
-		<title><?php echo $title; ?></title>
 		
-		<style>
-			.fields_cli{
-			   display:block;
-			}		
-		</style>
+		<title><?php echo $title; ?></title>
 		
 	</head>
 	
 	<body>
-	
-		<!-- top navbar -->
+
+	<div class="dash">
 		
-		<?php include ("navbar.php"); ?>	
-		
-		<!-- sidebar and main content -->
-		
-		<div class="row" id="body-row">			
+		<!-- navbar -->
+
+		<?php include ("navbar.php"); ?>
+
+		<!-- center body -->
 			
-			<?php include ("navbar_side.php"); ?>			
+		<div class="dash-app">
+			
+			<!-- header bar -->
+			
+			<?php include ("header_bar.php"); ?>
+			
+			<!-- breadcrumb -->
+			
+			<nav class="bg-light" aria-label="breadcrumb">
+				<ol class="breadcrumb">								
+					<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
+					<li class="breadcrumb-item active" aria-current="page">Directorio de Contactos</li>
+				</ol>
+			</nav>		
 
-			<div class="col">
-				 
-				<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">		
-					<nav aria-label="breadcrumb">
-						<ol class="breadcrumb">								
-							<li class="breadcrumb-item"><a href="home">Dashboard</a></li>
-							<li class="breadcrumb-item active" aria-current="page">Directorio de Contactos</li>
-						</ol>
-					</nav>							
-				</div>
-	
-				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#newcontact">Agregar Contacto</button>
-
-				<?php
+			<!-- main content -->				
 				
-					$stmt = $db->prepare('SELECT contact_id, contact_name, contact_lastname, contact_alias, contact_email, contact_classif0, contact_classif1, contact_classif2 FROM dir_contacts ORDER BY contact_name');
-					$stmt->execute();	
+			<main class="dash-content">
+				
+				<div class="container-fluid">
+				
+					<h5><strong>Directorio de Contactos</strong></h5>			
 					
-					$numitems = $stmt->rowCount();
-					
-					if ($numitems == 0) {
-					
-						echo '<div class="alert alert-danger mt-5" role="alert">';
-							echo 'Esta tabla está vacia!';
-						echo '</div>';		
-					
-					} else {
-						
-						$output = "";
-						$cont1 = 0;
-						
-						while ($rrows = $stmt->fetch(PDO::FETCH_ASSOC)) {	
-						
-							$cont1++;
+					<div class="row dash-row mt-4">							
+				
+						<div class="col">								
+				
+							<div class="container-fluid border-top border-bottom pl-0 py-3 mb-4">
+								<button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newcontact">Agregar Contacto</button>	
+							</div>
+
+							<?php
 							
-							$disp_name = $rrows['contact_name'] . " " . $rrows['contact_lastname'];
-							
-							if ($rrows['contact_alias'] <> "")
-								$disp_name .= " (" . $rrows['contact_alias'] . ')';
-							
-							$disp_class = $rrows['contact_classif0'];
-							
-							if ($rrows['contact_classif1'] <> "")
-								$disp_class .= " / " . $rrows['contact_classif1'];
-							
-							/* links to edit and delete */
-							
-							$view = '<td style="text-align: center;"><form method="post" action="dir_contacts_view"><input type="submit" name="ctcview" value="Ver" class="btn btn-success btn-sm delete_data"><input type="hidden" name="contact_id" value="' . $rrows['contact_id'] . '"></form></td>';
-							
-							$output .= '<tr>';
-								$output .= '<td>' . $disp_name . '</td><td style="text-align: left;"><a href="mailto:' . $rrows['contact_email']  . '" style="color:#0056b3;">' . $rrows['contact_email'] . '</a></td><td style="text-align: center;">' . $rrows['contact_classif2'] . '</td><td style="text-align: center;">' . $disp_class . '</td>' . $view;
-							$output .= '</tr>';
-							
-							
-							/* search for subcontacts to merge in listing display */
-							
-							$stmt_sc = $db->prepare('SELECT subcontact_contact, subcontact_name, subcontact_lastname, subcontact_alias, subcontact_email FROM dir_subcontacts WHERE subcontact_contact = :subcontact_contact ORDER BY subcontact_name');
-							$stmt_sc->bindParam(':subcontact_contact', $rrows['contact_id']);								
-							$stmt_sc->execute();
-							
-							while ($rows_sc = $stmt_sc->fetch(PDO::FETCH_ASSOC)) {	
-							
-								$disp_subname = $rows_sc['subcontact_name'] . " " . $rows_sc['subcontact_lastname'];
+								$stmt = $db->prepare('SELECT contact_id, contact_name, contact_lastname, contact_alias, contact_email, contact_classif0, contact_classif1, contact_classif2 FROM dir_contacts ORDER BY contact_name');
+								$stmt->execute();	
 								
-								if ($rows_sc['subcontact_alias'] <> "")
-									$disp_subname .= " (" . $rows_sc['subcontact_alias'] . ')';
-							
-								$output .= '<tr>';
-									$output .= '<td style="color:#d9d9d9;">' . $disp_subname . '</td><td style="text-align: left;"><a href="mailto:' . $rows_sc['subcontact_email'] . '" style="color:#0056b3;">' . $rows_sc['subcontact_email'] . '</a></td><td style="text-align: center; color:#d9d9d9;">' . $rrows['contact_classif2'] . '</td><td style="text-align: center; color:#d9d9d9;">' . $disp_class . '</td>' . $view;
-								$output .= '</tr>';
-							
-							}								
+								$numitems = $stmt->rowCount();
+								
+								if ($numitems == 0) {
+								
+									echo '<div class="alert alert-danger mt-5" role="alert">';
+										echo 'Esta tabla está vacia!';
+									echo '</div>';		
+								
+								} else {
+									
+									$output = "";
+									$cont1 = 0;
+									
+									while ($rrows = $stmt->fetch(PDO::FETCH_ASSOC)) {	
+									
+										$cont1++;
+										
+										$disp_name = $rrows['contact_name'] . " " . $rrows['contact_lastname'];
+										
+										if ($rrows['contact_alias'] <> "")
+											$disp_name .= " (" . $rrows['contact_alias'] . ')';
+										
+										$disp_class = $rrows['contact_classif0'];
+										
+										if ($rrows['contact_classif1'] <> "")
+											$disp_class .= " / " . $rrows['contact_classif1'];
+										
+										/* links to edit and delete */
+										
+										$view = '<td style="text-align:center; width:120px;"><form method="post" action="dir_contacts_view"><button type="submit" name="ctcview" value="Ver" class="btn btn-success btn-sm delete_data"><i class="fas fa-search-plus"></i></button><input type="hidden" name="contact_id" value="' . $rrows['contact_id'] . '"></form></td>';
+										
+										$output .= '<tr>';
+											$output .= '<td>' . $disp_name . '</td><td style="text-align: left;"><a href="mailto:' . $rrows['contact_email']  . '" style="color:#0056b3;">' . $rrows['contact_email'] . '</a></td><td style="text-align: center;">' . $rrows['contact_classif2'] . '</td><td style="text-align: center;">' . $disp_class . '</td>' . $view;
+										$output .= '</tr>';
+										
+										
+										/* search for subcontacts to merge in listing display */
+										
+										$stmt_sc = $db->prepare('SELECT subcontact_contact, subcontact_name, subcontact_lastname, subcontact_alias, subcontact_email FROM dir_subcontacts WHERE subcontact_contact = :subcontact_contact ORDER BY subcontact_name');
+										$stmt_sc->bindParam(':subcontact_contact', $rrows['contact_id']);								
+										$stmt_sc->execute();
+										
+										while ($rows_sc = $stmt_sc->fetch(PDO::FETCH_ASSOC)) {	
+										
+											$disp_subname = $rows_sc['subcontact_name'] . " " . $rows_sc['subcontact_lastname'];
+											
+											if ($rows_sc['subcontact_alias'] <> "")
+												$disp_subname .= " (" . $rows_sc['subcontact_alias'] . ')';
+										
+											$output .= '<tr>';
+												$output .= '<td style="color:#d9d9d9;">' . $disp_subname . '</td><td style="text-align: left;"><a href="mailto:' . $rows_sc['subcontact_email'] . '" style="color:#0056b3;">' . $rows_sc['subcontact_email'] . '</a></td><td style="text-align: center; color:#d9d9d9;">' . $rrows['contact_classif2'] . '</td><td style="text-align: center; color:#d9d9d9;">' . $disp_class . '</td>' . $view;
+											$output .= '</tr>';
+										
+										}								
 
-						}
-						
-						echo '<p class="text-right mr-3">No. Items : ' . $cont1 . '</p>';
-						
-						echo '<table id="table_list" class="table table-bordered table-hover">';							
-							echo '<thead class="thead-dark">';
-								echo '<tr><th scope="col">Contacto</th><th scope="col" style="text-align: center;">Email</th><th scope="col" style="text-align: center;">Categoría</th><th scope="col" style="text-align: center;">Marca</th><th scope="col" style="text-align: center;">Ver</th></tr>';
-							echo '</thead>';
-							echo '<tbody>';						
-								echo $output;							
-							echo '</tbody>';						
-						echo '</table>';
+									}
+									
+									echo '<table id="table_list" class="table table-bordered table-hover">';							
+										echo '<thead class="thead-dark">';
+											echo '<tr><th scope="col">Contacto</th><th scope="col" style="text-align: center;">Email</th><th scope="col" style="text-align: center;">Categoría</th><th scope="col" style="text-align: center;">Marca</th><th scope="col" style="text-align: center;">Ver</th></tr>';
+										echo '</thead>';
+										echo '<tbody>';						
+											echo $output;							
+										echo '</tbody>';						
+									echo '</table>';
+										
+								}
 							
-					}
-				
-				?>
+							?>
+							
+						</div>
 
-			</div>	
-			
-			<!-- footer -->	
+					</div>	
+
+				</div>
 					
-			<?php include ("footer.php"); ?>	
-				
-		</div>				
+			</main>			
+			
+		</div>
 		
 		<!-- MODALS -->
 		
@@ -211,7 +184,7 @@
 				<div class="modal-content">
 				
 					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">Agregar Contacto</h5>
+						<h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-address-card mr-3"></i>Agregar Contacto</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
@@ -563,7 +536,7 @@
 								<div class="form-row">								
 									<div class="col">
 										<label for="contact_dob" class="col-form-label">Fecha de Nacimiento:</label>
-										<input type="text" id="contact_dob" name="contact_dob" class="form-control datepicker">
+										<input type="date" id="contact_dob" name="contact_dob" class="form-control">
 									</div>									
 									<div class="col">
 										<label for="contact_nationality" class="col-form-label">Nacionalidad:</label>
@@ -828,7 +801,7 @@
 									</div>
 									<div class="col">
 										<label for="contact_pass_exp" class="col-form-label">Pasaporte Fecha Expiración:</label>
-										<input type="text" id="contact_pass_exp" name="contact_pass_exp" class="form-control datepicker">
+										<input type="date" id="contact_pass_exp" name="contact_pass_exp" class="form-control ">
 									</div>								
 								</div>	
 								
@@ -839,7 +812,7 @@
 									</div>
 									<div class="col">
 										<label for="contact_dni_exp" class="col-form-label">DNI Fecha Expiración:</label>
-										<input type="text" id="contact_dni_exp" name="contact_dni_exp" class="form-control datepicker">
+										<input type="date" id="contact_dni_exp" name="contact_dni_exp" class="form-control">
 									</div>								
 								</div>
 							
@@ -861,8 +834,8 @@
 							</div>							
 
 							<div class="modal-footer">							
-								<button type="submit" class="btn btn-primary" id="addcontact" name="addcontact" value="save">Guardar</button>
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>						
+								<button type="submit" class="btn btn-primary btn-sm" id="addcontact" name="addcontact" value="save">Guardar</button>
+								<button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cerrar</button>						
 							</div>		
 
 						</div>	
@@ -875,42 +848,22 @@
 			
 		</div>
 
-		<!-- jQuery, Popper.js, Bootstrap JS -->
+		<!-- js -->
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>
 		
-		<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js"></script>		
+		<!-- custom js -->
 		
-		<!-- Optional JavaScript -->
+		<script src="js/easion.js"></script>
 		
 		<!-- datatables -->		
 		
 		<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-		<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>		
+		<script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>	
 
-		<!-- Menu Toggle Script -->
-		
-		<script>
-			$('#body-row .collapse').collapse('hide');
-			$('#collapse-icon').addClass('fa-angle-double-left');
-			$('[data-toggle=sidebar-colapse]').click(function() {
-				SidebarCollapse();
-			});
-			function SidebarCollapse () {
-				$('.menu-collapsed').toggleClass('d-none');
-				$('.sidebar-submenu').toggleClass('d-none');
-				$('.submenu-icon').toggleClass('d-none');
-				$('#sidebar-container').toggleClass('sidebar-expanded sidebar-collapsed');
-				var SeparatorTitle = $('.sidebar-separator-title');
-				if ( SeparatorTitle.hasClass('d-flex') ) {
-					SeparatorTitle.removeClass('d-flex');
-				} else {
-					SeparatorTitle.addClass('d-flex');
-				}				
-				$('#collapse-icon').toggleClass('fa-angle-double-left fa-angle-double-right');
-			}					
-		</script>
-		
 		<script>
 			$(document).ready(function() {
 				$('#table_list').DataTable();
@@ -950,7 +903,30 @@
 						break;
 				}				
 			});			
-		</script>		
+		</script>	
+
+		<!-- send form_new form -->
+		
+		<script>		
+			$(document).ready(function(){
+				$("form[id='form_addcontact']").submit(function(){
+					$.ajax({
+						url : 'dir_contacts_add.php',
+						type : 'POST',
+						data : $(this).serialize(),
+						dataType:"json",  
+						success : function(data){	
+							if (data.stat === 1) {
+								$("#errmsg").html(data.msg);														
+							} else {
+								window.location='dir_contacts_view.php?itemid=' + data.lastid + '&msg=' + data.msg 								
+							}	
+						}
+					});
+					return false;
+				});
+			});			
+		</script>	
 
 	</body>
 	
