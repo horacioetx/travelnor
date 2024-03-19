@@ -12,7 +12,7 @@
 	
 	/* database credentials */
 	
-	define('DBHOST','localhost');
+	define('DBHOST','23.19.65.209');
 	define('DBUSER','nddinfos_traveln');
 	define('DBPASS','Sheremetievo-2');
 	define('DBNAME','nddinfos_travelnor');
@@ -23,11 +23,11 @@
 		
 		/* PRODUCTION. Activate when in production */
 		
-		// $db = new PDO("mysql:host=".DBHOST.";port=8889;charset=UTF8;dbname=".DBNAME, DBUSER, DBPASS);
+		$db = new PDO("mysql:host=".DBHOST.";port=3306;charset=UTF8;dbname=".DBNAME, DBUSER, DBPASS);
 		
 		/*  DEVELOPMENT. Activate when in developemnet */
 		
-		$db = new PDO("mysql:host=".DBHOST.";port=3306;charset=UTF8;dbname=".DBNAME, DBUSER, DBPASS);
+		// $db = new PDO("mysql:host=".DBHOST.";port=3306;charset=UTF8;dbname=".DBNAME, DBUSER, DBPASS);
 		
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);			
 
