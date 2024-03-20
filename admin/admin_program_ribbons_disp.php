@@ -27,7 +27,7 @@
 			
 			$output .= '<div class="col-12 col-md-3">';									
 				$output .= '<div class="card easion-card">';
-					$output .= '<img src= "../images/ribbons/" class="card-img-top" alt="' . $rrows['ribbon_file'] . '">';
+					$output .= '<img src= "../images/ribbons/' . $rrows['ribbon_file'] . '" class="card-img-top" alt="' . $rrows['ribbon_file'] . '">';
 					$output .= '<div class="card-body">';
 						$output .= '<h6 class="card-title">' . $rrows['ribbon_file'] . '</h6>';		
 						$output .=  '<a data-org="ribbons" data-row-id="' . $rrows['ribbon_id'] . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_image float-right mt-1"><i class="fas fa-trash-alt"></i></a>';								
