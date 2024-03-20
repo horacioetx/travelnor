@@ -42,7 +42,7 @@
 						echo '<div class="col">';					
 							echo '<div class="card easion-card text-center h-75 mb-3">';
 								echo '<div class="card-body">';
-									echo '<img src="https://cucoa.com/images/programs_slides/' . $rrows[$image] . '" class="img-fluid rounded mx-auto d-block" alt=' .$rrows[$image] . '">';
+									echo '<img src="images/programs_slides/' . $rrows[$image] . '" class="img-fluid rounded mx-auto d-block" alt=' .$rrows[$image] . '">';
 								echo '</div>';
 								echo '<div class="card-footer text-muted">' . $disp_caption . '</div>';
 							echo '</div>';	

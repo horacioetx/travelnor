@@ -21,7 +21,7 @@
 			echo '</div>';
 			
 			echo '<div class="card-body">';							
-				echo '<img src="https://cucoa.com//images/maps/' . $rrows['program_map1'] . '" class="img-fluid rounded mx-auto d-block" alt="' . $rrows['program_map1'] . '">';
+				echo '<img src="images/maps/' . $rrows['program_map1'] . '" class="img-fluid rounded mx-auto d-block" alt="' . $rrows['program_map1'] . '">';
 			echo '</div>';
 				
 		}		

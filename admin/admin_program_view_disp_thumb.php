@@ -59,7 +59,7 @@
 					echo '<div><a data-org="thumbimage" data-row-id="' . $prog_id . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_image float-right mt-1"><i class="fas fa-trash-alt"></i></a></div>';
 				echo '</div>';
 				echo '<div class="card-body">';	
-					echo '<img src="https://cucoa.com/images/ourtrips/' . $rrows['program_thumb_image'] . '" class="img-fluid rounded mx-auto d-block" alt="' . $rrows['program_thumb_image'] . '">';	
+					echo '<img src="images/ourtrips/' . $rrows['program_thumb_image'] . '" class="img-fluid rounded mx-auto d-block" alt="' . $rrows['program_thumb_image'] . '">';	
 				echo '</div>';	
 
 			echo '</div>';				
