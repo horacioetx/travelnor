@@ -172,7 +172,7 @@
                                                                 echo '<div><a data-org="ticker" href="javascript:void(0)" class="btn btn-danger btn-sm delete_image float-right mt-1"><i class="fas fa-trash-alt"></i></a></div>';
                                                             echo '</div>';
                                                             echo '<div class="card-body">';	
-                                                                echo '<img src="https://cucoa.com/images/' . $conrow['ticker_img'] . '" class="img-fluid rounded mx-auto d-block" alt="' . $conrow['ticker_img'] . '">';	
+                                                                echo '<img src="images/ticker/' . $conrow['ticker_img'] . '" class="img-fluid rounded mx-auto d-block" alt="' . $conrow['ticker_img'] . '">';	
                                                             echo '</div>';	
                                                         echo '</div>';	
 

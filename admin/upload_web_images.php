@@ -13,7 +13,7 @@
         /* upload path */    
         
         if ($_POST['target_id'] == "ticker") { 	
-            $path = 'images/';        
+            $path = 'images/ticker/';        
         } elseif ($_POST['target_id'] == "ribbon") { 	
             $path = 'images/ribbons/';	
         } elseif ($_POST['target_id'] == "thumb") { 	
