@@ -13,17 +13,17 @@
         /* upload path */    
         
         if ($_POST['target_id'] == "ticker") { 	
-            $path = 'images/ticker/';        
+            $path = '../images/ticker/';        
         } elseif ($_POST['target_id'] == "ribbon") { 	
-            $path = 'images/ribbons/';	
+            $path = '../images/ribbons/';	
         } elseif ($_POST['target_id'] == "thumb") { 	
-            $path = 'images/ourtrips/';	
+            $path = '../images/ourtrips/';	
         } elseif ($_POST['target_id'] == "map") { 
-            $path = 'images/maps/';	
+            $path = '../images/maps/';	
         } elseif ($_POST['target_id'] == "ext") { 
-            $path = 'images/extensions/';	
+            $path = '../images/extensions/';	
         } else {		
-            $path = 'images/programs_slides/';		
+            $path = '../images/programs_slides/';		
         }
 
         /* upload routine */
