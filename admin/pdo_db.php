@@ -15,7 +15,7 @@
 	define('DBHOST','162.240.37.39');
 	define('DBUSER','mcwbnemy_traveln');
 	define('DBPASS','Sheremetievo-2');
-	define('DBNAME','mcwbnemy_travelnor_xx');
+	define('DBNAME','mcwbnemy_travelnor');
 	
 	try{
 		
