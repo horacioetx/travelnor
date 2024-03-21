@@ -101,7 +101,7 @@
 							echo '<div><a data-org="ext" data-row-id="' . $rows_ext['ext_id'] . '" href="javascript:void(0)" class="btn btn-danger btn-sm delete_image float-right mt-1"><i class="fas fa-trash-alt"></i></a></a></div>';
 						echo '</div>';						
 						echo '<div class="card-body">';	
-							echo '<img src="https://cucoa.com/images/extensions/' . $rows_ext['ext_image'] . '" class="img-fluid rounded mx-auto d-block" alt="' . $rows_ext['ext_name'] . '">';	
+							echo '<img src="../images/extensions/' . $rows_ext['ext_image'] . '" class="img-fluid rounded mx-auto d-block" alt="' . $rows_ext['ext_name'] . '">';	
 						echo '</div>';	
 					echo '</div>';				
 				echo '</div>';	

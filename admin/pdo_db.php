@@ -12,10 +12,10 @@
 	
 	/* database credentials */
 	
-	define('DBHOST','50.87.253.77');
-	define('DBUSER','nddinfos_traveln');
+	define('DBHOST','162.240.37.39');
+	define('DBUSER','mcwbnemy_traveln');
 	define('DBPASS','Sheremetievo-2');
-	define('DBNAME','nddinfos_travelnor');
+	define('DBNAME','mcwbnemy_travelnorx');
 	
 	try{
 		
